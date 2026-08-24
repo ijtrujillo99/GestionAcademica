@@ -21,4 +21,13 @@ public class AsistenciaController : ControllerBase
     {
         return Ok(await _servicio.ListarClasesAsync(idCursoOfertado, cancellationToken));
     }
+
+    [HttpPost]
+    public async Task<ActionResult<ClaseResumenDto>> Crear(
+        int idCursoOfertado,
+        [FromBody] ClaseEscrituraDto datos,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _servicio.CrearClaseAsync(idCursoOfertado, datos, cancellationToken));
+    }
 }

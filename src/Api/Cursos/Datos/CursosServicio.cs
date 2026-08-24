@@ -24,7 +24,16 @@ public class CursosServicio : ICursosServicio
                 c.Grupo.CodigoGrupo,
                 c.Docente.Nombre,
                 c.Aula.CodigoAula,
-                c.Inscripciones.Count))
+                c.Inscripciones.Count,
+                c.Horarios
+                    .OrderBy(h => h.DiaSemana)
+                    .ThenBy(h => h.HoraInicio)
+                    .Select(h => new HorarioCursoDto(
+                        h.IdHorario,
+                        h.DiaSemana,
+                        h.HoraInicio,
+                        h.HoraFin))
+                    .ToList()))
             .ToListAsync(cancellationToken);
     }
 }

@@ -45,8 +45,9 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Salud | GET | `/api/salud` |
 | Catálogos | GET | `/api/catalogos` |
 | Académico | GET | `/api/academico` |
-| Cursos | GET | `/api/cursos-ofertados` |
-| Clases | GET | `/api/cursos-ofertados/{id}/clases` |
+| Cursos | GET | `/api/cursos-ofertados` (incluye horarios) |
+| Clases | GET, POST | `/api/cursos-ofertados/{id}/clases` |
+| Clase | PUT | `/api/clases/{id}` |
 | Asistencia | GET, PUT | `/api/clases/{id}/asistencias` |
 | Parciales | GET | `/api/cursos-ofertados/{id}/parciales` |
 | Evaluaciones del parcial | GET, POST | `/api/parciales/{id}/evaluaciones` |
@@ -99,7 +100,9 @@ Los controladores no llevan `try/catch` de HTTP: lanzan la excepción y el middl
 ### Asistencia
 
 - Ausente ≠ sin registro (fila inexistente) ≠ retirado.
-- El PUT hace upsert. No inventa ausencias.
+- El POST de clases crea la sesión. El horario se resuelve con el día de la fecha; si el curso no tiene bloque ese día, 400.
+- El PUT de clase solo cambia tema y descripción. No mueve la fecha.
+- El PUT de asistencias hace upsert. No inventa ausencias.
 - Rechaza retirados e inscripciones de otro curso (`ReglaNegocioException` → 400).
 - Después de `FechaRetiro` no se espera asistencia (`Fecha < FechaRetiro`).
 

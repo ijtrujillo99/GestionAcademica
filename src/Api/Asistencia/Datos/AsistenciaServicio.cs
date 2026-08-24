@@ -31,6 +31,96 @@ public class AsistenciaServicio : IAsistenciaServicio
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<ClaseResumenDto> CrearClaseAsync(
+        int idCursoOfertado,
+        ClaseEscrituraDto datos,
+        CancellationToken cancellationToken)
+    {
+        var cursoExiste = await _contexto.CursosOfertados
+            .AsNoTracking()
+            .AnyAsync(c => c.IdCursoOfertado == idCursoOfertado, cancellationToken);
+
+        if (!cursoExiste)
+        {
+            throw new KeyNotFoundException($"No existe el curso ofertado {idCursoOfertado}.");
+        }
+
+        var fecha = datos.Fecha.Date;
+        var diaSemana = CalendarioHorario.DiaSemana(fecha);
+
+        var bloques = await _contexto.Horarios
+            .AsNoTracking()
+            .Where(h => h.IdCursoOfertado == idCursoOfertado && h.DiaSemana == diaSemana)
+            .OrderBy(h => h.HoraInicio)
+            .ToListAsync(cancellationToken);
+
+        if (bloques.Count == 0)
+        {
+            throw new ReglaNegocioException(
+                "Este curso no tiene horario ese día. No es posible crear la sesión.");
+        }
+
+        if (bloques.Count > 1)
+        {
+            throw new ReglaNegocioException(
+                "Este curso tiene más de un bloque ese día. No es posible crear la sesión.");
+        }
+
+        var horario = bloques[0];
+
+        var yaExiste = await _contexto.Clases
+            .AsNoTracking()
+            .AnyAsync(
+                c => c.IdCursoOfertado == idCursoOfertado
+                     && c.Fecha == fecha
+                     && c.IdHorario == horario.IdHorario,
+                cancellationToken);
+
+        if (yaExiste)
+        {
+            throw new ReglaNegocioException(
+                "Ya existe una sesión para este curso en esa fecha y horario.");
+        }
+
+        var clase = new Clase
+        {
+            IdCursoOfertado = idCursoOfertado,
+            IdHorario = horario.IdHorario,
+            Fecha = fecha,
+            Tema = NormalizarOpcional(datos.Tema, 200, "tema"),
+            Descripcion = NormalizarOpcional(datos.Descripcion, 500, "descripción")
+        };
+
+        _contexto.Clases.Add(clase);
+        await _contexto.SaveChangesAsync(cancellationToken);
+
+        return new ClaseResumenDto(clase.IdClase, clase.Fecha, clase.Tema, 0);
+    }
+
+    public async Task<ClaseResumenDto> EditarClaseAsync(
+        int idClase,
+        ClaseEdicionDto datos,
+        CancellationToken cancellationToken)
+    {
+        var clase = await _contexto.Clases
+            .FirstOrDefaultAsync(c => c.IdClase == idClase, cancellationToken);
+
+        if (clase is null)
+        {
+            throw new KeyNotFoundException($"No existe la clase {idClase}.");
+        }
+
+        clase.Tema = NormalizarOpcional(datos.Tema, 200, "tema");
+        clase.Descripcion = NormalizarOpcional(datos.Descripcion, 500, "descripción");
+
+        await _contexto.SaveChangesAsync(cancellationToken);
+
+        var asistenciasRegistradas = await _contexto.Asistencias
+            .CountAsync(a => a.IdClase == idClase, cancellationToken);
+
+        return new ClaseResumenDto(clase.IdClase, clase.Fecha, clase.Tema, asistenciasRegistradas);
+    }
+
     public async Task<ClaseAsistenciaDto> ObtenerListaAsync(int idClase, CancellationToken cancellationToken)
     {
         var clase = await _contexto.Clases
@@ -189,5 +279,22 @@ public class AsistenciaServicio : IAsistenciaServicio
 
         return inscripcion.FechaRetiro is null
             || fechaClase < inscripcion.FechaRetiro.Value.Date;
+    }
+
+    private static string? NormalizarOpcional(string? valor, int maximo, string campo)
+    {
+        if (string.IsNullOrWhiteSpace(valor))
+        {
+            return null;
+        }
+
+        var texto = valor.Trim();
+        if (texto.Length > maximo)
+        {
+            throw new ReglaNegocioException(
+                $"El {campo} no puede superar {maximo} caracteres.");
+        }
+
+        return texto;
     }
 }
