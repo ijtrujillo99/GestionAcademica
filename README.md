@@ -30,7 +30,7 @@ dotnet run --project src/Api
 
 Swagger: `https://localhost:7040/swagger`
 
-Si `GET /api/salud` muestra 36 estudiantes, la API está leyendo tus datos.
+Si `GET /api/salud` muestra 36 estudiantes, la API está leyendo los datos de ejemplo.
 
 ```powershell
 dotnet test tests/GestionAcademica.Api.Tests/GestionAcademica.Api.Tests.csproj

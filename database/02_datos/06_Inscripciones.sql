@@ -73,9 +73,9 @@ BEGIN TRY
        Por defecto:
        Activa + Oficial
 
-       Excepciones:
-       Anthony  -> Retirada
-       María    -> Pendiente / No oficial
+       Excepciones de ejemplo:
+       E2024-005 (Gabriel)  -> Retirada
+       E2020-025 (Daniela)  -> Pendiente / No oficial
        ============================================================ */
 
     INSERT INTO acad.InscripcionCurso
@@ -94,10 +94,10 @@ BEGIN TRY
         @IdCursoBD,
 
         CASE
-            WHEN E.Carnet = '2024-1735U'
+            WHEN E.Carnet = 'E2024-005'
                 THEN @IdEstadoRetirada
 
-            WHEN E.Carnet = '2020-0636I'
+            WHEN E.Carnet = 'E2020-025'
                 THEN @IdEstadoPendiente
 
             ELSE @IdEstadoActiva
@@ -106,28 +106,28 @@ BEGIN TRY
         '2026-08-04',
 
         CASE
-            WHEN E.Carnet = '2024-1735U'
+            WHEN E.Carnet = 'E2024-005'
                 THEN '2026-08-07'
             ELSE '2026-08-04'
         END,
 
         CASE
-            WHEN E.Carnet = '2024-1735U'
+            WHEN E.Carnet = 'E2024-005'
                 THEN '2026-08-07'
             ELSE NULL
         END,
 
         CASE
-            WHEN E.Carnet = '2020-0636I'
+            WHEN E.Carnet = 'E2020-025'
                 THEN 0
             ELSE 1
         END,
 
         CASE
-            WHEN E.Carnet = '2024-1735U'
+            WHEN E.Carnet = 'E2024-005'
                 THEN 'El estudiante comunicó su retiro después de haber asistido a sesiones anteriores.'
 
-            WHEN E.Carnet = '2020-0636I'
+            WHEN E.Carnet = 'E2020-025'
                 THEN 'Situación pendiente de confirmación con la estudiante debido a discrepancia con la lista oficial.'
 
             ELSE NULL

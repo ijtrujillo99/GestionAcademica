@@ -246,7 +246,7 @@ ORDER BY
 /* ============================================================
    4. CASOS ESPECIALES
 
-   Anthony, María, Alberto y Harvey
+   Gabriel, Daniela, Pablo y Raul
    ============================================================ */
 
 SELECT
@@ -286,10 +286,10 @@ LEFT JOIN acad.Asistencia A
 WHERE IC.IdCursoOfertado = @IdCursoOfertado
   AND E.Carnet IN
   (
-      '2024-1735U', -- Anthony
-      '2020-0636I', -- María
-      '6FA99262',   -- Alberto
-      '6B8F1E77'    -- Harvey
+      'E2024-005', -- Gabriel (retirado)
+      'E2020-025', -- Daniela (pendiente)
+      'TMP-A01',   -- Pablo (sin asistencia)
+      'TMP-B02'    -- Raul (sin asistencia)
   )
 
 GROUP BY

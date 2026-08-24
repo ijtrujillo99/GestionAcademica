@@ -8,6 +8,8 @@ BEGIN TRY
 
     BEGIN TRANSACTION;
 
+    /* Datos académicos de ejemplo. No corresponden a una oferta real. */
+
     /* ============================================================
        1. ÁREA DE CONOCIMIENTO
        ============================================================ */
@@ -68,9 +70,7 @@ BEGIN TRY
     /* ============================================================
        3. PLAN DE ESTUDIOS
        
-       NOTA:
-       El año de inicio del plan debe sustituirse por el valor
-       oficial cuando tengamos esa información.
+       Plan de estudios de ejemplo.
        ============================================================ */
 
     DECLARE @IdPlanEstudio INT;
@@ -162,7 +162,7 @@ BEGIN TRY
        6. DETALLE DEL PLAN - BASE DE DATOS I
        
        Segundo año = cuarto semestre del plan.
-       Créditos: 4, según la información proporcionada.
+       Créditos: 4.
        ============================================================ */
 
     IF NOT EXISTS
@@ -201,8 +201,7 @@ BEGIN TRY
     /* ============================================================
        7. PERÍODO ACADÉMICO
        
-       Las fechas son PROVISIONALES.
-       Sustituir por las fechas oficiales de 2026-II.
+       Fechas de ejemplo del período 2026-II.
        ============================================================ */
 
     DECLARE @IdPeriodo INT;
@@ -225,8 +224,8 @@ BEGIN TRY
         (
             2026,
             2,
-            '2026-07-25', -- Real
-            '2026-11-20'  -- Real
+            '2026-07-25',
+            '2026-11-20'
         );
 
         SET @IdPeriodo = SCOPE_IDENTITY();
@@ -237,14 +236,14 @@ BEGIN TRY
        8. AULAS
        ============================================================ */
 
-    DECLARE @IdAulaBIV4 INT;
-    DECLARE @IdAulaBIII4 INT;
+    DECLARE @IdAula201 INT;
+    DECLARE @IdAula105 INT;
 
-    SELECT @IdAulaBIV4 = IdAula
+    SELECT @IdAula201 = IdAula
     FROM acad.Aula
-    WHERE CodigoAula = 'B-IV-4';
+    WHERE CodigoAula = 'A-201';
 
-    IF @IdAulaBIV4 IS NULL
+    IF @IdAula201 IS NULL
     BEGIN
         INSERT INTO acad.Aula
         (
@@ -254,20 +253,20 @@ BEGIN TRY
         )
         VALUES
         (
-            'B-IV-4',
-            'B-IV-4',
-            'Edificio RLP'
+            'A-201',
+            'Aula 201',
+            'Edificio Principal'
         );
 
-        SET @IdAulaBIV4 = SCOPE_IDENTITY();
+        SET @IdAula201 = SCOPE_IDENTITY();
     END;
 
 
-    SELECT @IdAulaBIII4 = IdAula
+    SELECT @IdAula105 = IdAula
     FROM acad.Aula
-    WHERE CodigoAula = 'B-III-4';
+    WHERE CodigoAula = 'A-105';
 
-    IF @IdAulaBIII4 IS NULL
+    IF @IdAula105 IS NULL
     BEGIN
         INSERT INTO acad.Aula
         (
@@ -277,12 +276,12 @@ BEGIN TRY
         )
         VALUES
         (
-            'B-III-4',
-            'B-III-4',
-            'Edificio RLP'
+            'A-105',
+            'Aula 105',
+            'Edificio Principal'
         );
 
-        SET @IdAulaBIII4 = SCOPE_IDENTITY();
+        SET @IdAula105 = SCOPE_IDENTITY();
     END;
 
 
@@ -349,14 +348,14 @@ BEGIN TRY
        10. DOCENTES
        ============================================================ */
 
-    DECLARE @IdDocenteIngrid INT;
-    DECLARE @IdDocenteYasser INT;
+    DECLARE @IdDocenteAna INT;
+    DECLARE @IdDocenteRoberto INT;
 
-    SELECT @IdDocenteIngrid = IdDocente
+    SELECT @IdDocenteAna = IdDocente
     FROM acad.Docente
-    WHERE Correo = 'ingrid.trujillo@uni.edu.ni';
+    WHERE Correo = 'ana.mendoza@docente.ejemplo';
 
-    IF @IdDocenteIngrid IS NULL
+    IF @IdDocenteAna IS NULL
     BEGIN
         INSERT INTO acad.Docente
         (
@@ -366,20 +365,20 @@ BEGIN TRY
         )
         VALUES
         (
-            'Ingrid Jahoska Trujillo Maltez',
-            'ingrid.trujillo@uni.edu.ni',
+            'Ana Lucía Mendoza Soto',
+            'ana.mendoza@docente.ejemplo',
             NULL
         );
 
-        SET @IdDocenteIngrid = SCOPE_IDENTITY();
+        SET @IdDocenteAna = SCOPE_IDENTITY();
     END;
 
 
-    SELECT @IdDocenteYasser = IdDocente
+    SELECT @IdDocenteRoberto = IdDocente
     FROM acad.Docente
-    WHERE Nombre = 'Yasser Radames Montiel';
+    WHERE Correo = 'roberto.pena@docente.ejemplo';
 
-    IF @IdDocenteYasser IS NULL
+    IF @IdDocenteRoberto IS NULL
     BEGIN
         INSERT INTO acad.Docente
         (
@@ -389,32 +388,32 @@ BEGIN TRY
         )
         VALUES
         (
-            'Yasser Radames MontieL',
-            'yasser.montiel@uni.edu.ni',
+            'Roberto Carlos Peña Aguilar',
+            'roberto.pena@docente.ejemplo',
             NULL
         );
 
-        SET @IdDocenteYasser = SCOPE_IDENTITY();
+        SET @IdDocenteRoberto = SCOPE_IDENTITY();
     END;
 
 
     /* ============================================================
        11. CURSO OFERTADO
        
-       Ingrid:
+       Ana Lucía:
        Base de Datos I
        Grupo 2T2-SIS-S
-       Aula B-IV-4
+       Aula A-201
 
-       Yasser:
+       Roberto:
        Manufactura de Productos
        Grupo 2T2-SIS-S
-       Aula B-IV-4
+       Aula A-201
 
-       Yasser:
+       Roberto:
        Manufactura de Productos
        Grupo 2T1-SIS-S
-       Aula B-III-4
+       Aula A-105
        ============================================================ */
 
     DECLARE @IdCursoBD INT;
@@ -441,8 +440,8 @@ BEGIN TRY
         (
             @IdAsignaturaBD,
             @IdGrupo2T2,
-            @IdDocenteIngrid,
-            @IdAulaBIV4,
+            @IdDocenteAna,
+            @IdAula201,
             NULL
         );
 
@@ -468,8 +467,8 @@ BEGIN TRY
         (
             @IdAsignaturaManufactura,
             @IdGrupo2T2,
-            @IdDocenteYasser,
-            @IdAulaBIV4
+            @IdDocenteRoberto,
+            @IdAula201
         );
 
         SET @IdCursoManufactura2T2 = SCOPE_IDENTITY();
@@ -494,8 +493,8 @@ BEGIN TRY
         (
             @IdAsignaturaManufactura,
             @IdGrupo2T1,
-            @IdDocenteYasser,
-            @IdAulaBIII4
+            @IdDocenteRoberto,
+            @IdAula105
         );
 
         SET @IdCursoManufactura2T1 = SCOPE_IDENTITY();

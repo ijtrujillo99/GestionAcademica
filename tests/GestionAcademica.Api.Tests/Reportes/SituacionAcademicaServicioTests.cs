@@ -25,15 +25,15 @@ public sealed class SituacionAcademicaServicioTests
             puntajeTareaCurso: null,
             idInscripcion: 6,
             idEstudiante: 10,
-            carnet: "2024-1735U",
-            nombre: "Anthony");
+            carnet: "E2024-005",
+            nombre: "Gabriel");
         ConfigurarConsulta(1, resumen);
 
         var filas = await _sut.ObtenerAsync(1, CancellationToken.None);
 
         var fila = Assert.Single(filas);
         Assert.Equal(ResultadoAcademico.Retirado, fila.ResultadoAcademico);
-        Assert.Equal("2024-1735U", fila.Carnet);
+        Assert.Equal("E2024-005", fila.Carnet);
         VerificarConsulta(1);
     }
 
@@ -124,18 +124,18 @@ public sealed class SituacionAcademicaServicioTests
             ResumenSituacionFactory.Crear(
                 estadoInscripcion: ResultadoAcademico.EstadoInscripcionRetirada,
                 idInscripcion: 6,
-                nombre: "Anthony"),
+                nombre: "Gabriel"),
             ResumenSituacionFactory.Crear(
                 evaluacionesPendientes: 2,
                 idInscripcion: 7,
-                nombre: "María"),
+                nombre: "Daniela"),
             ResumenSituacionFactory.Crear(
                 evaluacionesPendientes: 0,
                 parcialI: 35m,
                 parcialII: 30m,
                 puntajeTareaCurso: 20m,
                 idInscripcion: 8,
-                nombre: "Alberto")
+                nombre: "Pablo")
         };
         _consulta
             .Setup(x => x.ObtenerPorCursoAsync(9, It.IsAny<CancellationToken>()))

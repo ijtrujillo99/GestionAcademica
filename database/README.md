@@ -4,7 +4,7 @@ Se ejecutan **en orden numérico**, por carpeta.
 
 ```text
 01_esquema/        crear base, esquemas y tablas
-02_datos/          catálogos y datos reales
+02_datos/          catálogos y datos de ejemplo
 03_diagnostico/    validación en SSMS (la API no lo usa)
 04_reportes/       procedimientos de consulta
 ```
@@ -41,7 +41,7 @@ DESKTOP-INGRIDT / GestionAcademica
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
-Si el repositorio va a ser público, no subas `02_datos/05`–`10` (nombres, carnets, correos y notas reales).
+Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo. No corresponden a personas reales.
 
 ## Reportes y API
 

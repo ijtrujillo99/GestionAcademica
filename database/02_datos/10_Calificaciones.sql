@@ -74,10 +74,7 @@ BEGIN TRY
 
 
     /* ============================================================
-       3. CARGA DE CALIFICACIONES
-
-       Fuente:
-       Hoja "Grupos 1" del Excel
+       3. CARGA DE CALIFICACIONES DE EJEMPLO
 
        Evaluación 1:
        Tarea 1 - Mini-exposiciones
@@ -98,38 +95,38 @@ BEGIN TRY
         PuntajeObtenido
     )
     VALUES
-        ('2022-0950U', 7), -- CANDIDA
-        ('2023-0394I', 7), -- IAN
-        ('2022-0804U', 7), -- KAROLINA
-        ('2023-0234I', 7), -- LEONARDO
-        ('2023-0235I', 7), -- DAVID ALEXANDER
-        ('2023-0233I', 7), -- LUIS
-        ('2023-0819I', 7), -- GERARDO
-        ('2023-0390I', 7), -- MIGUEL
-        ('2024-1662U', 7), -- JAIRO
-        ('2024-1676U', 7), -- RICHARD
-        ('2024-1630U', 7), -- SOFÍA
-        ('2024-1607U', 7), -- HANIEL
-        ('2024-1657U', 7), -- MARVIN
-        ('2024-1688U', 7), -- MICHELLE ALEJANDRA
-        ('2024-1361U', 7), -- AMALIA
-        ('2024-1372U', 7), -- AMMY
-        ('2024-1369U', 7), -- ANYELICA
-        ('2024-1568U', 7), -- CRISTÓBAL
-        ('2024-1648U', 7), -- IXEL
-        ('2023-0221I', 7), -- MELANIA
-        ('2023-0415I', 7), -- GENESIS
-        ('2023-0396I', 7), -- JESLYNG
-        ('2023-1083U', 7), -- MICHELLE TATIANA
-        ('2020-0636I', 7), -- MARÍA
-        ('2023-0916U', 7), -- ALEJANDRO
-        ('2024-1669U', 7), -- ABEL
-        ('2024-1664U', 7), -- DAVID ALBERTO
-        ('2024-1633U', 7), -- MAIKELI
-        ('2023-0217I', 7), -- WILLIAN
-        ('2024-1693U', 7), -- ZAHID
-        ('2022-0294I', 7), -- CORINA
-        ('2023-1040U', 7); -- JACQUELINE
+        ('E2024-001', 6), -- CARLOS
+        ('E2023-002', 7), -- DIEGO
+        ('E2024-003', 5), -- ELENA
+        ('E2024-004', 7), -- FABIOLA
+        ('E2024-006', 6), -- HELENA
+        ('E2022-007', 7), -- IRENE
+        ('E2022-008', 4), -- JULIA
+        ('E2024-009', 7), -- KEVIN
+        ('E2024-010', 6), -- LUIS
+        ('E2023-011', 7), -- MANUEL
+        ('E2023-012', 5), -- NATALIA
+        ('E2023-013', 6), -- OSCAR
+        ('E2024-014', 7), -- PEDRO
+        ('E2023-015', 7), -- SEBASTIAN
+        ('E2024-016', 6), -- TAMARA
+        ('E2023-017', 5), -- URSULA
+        ('E2024-018', 7), -- VICTOR
+        ('E2023-019', 6), -- WALTER
+        ('E2022-021', 7), -- YADIRA
+        ('E2023-022', 4), -- ANDRES
+        ('E2023-023', 7), -- BRUNO
+        ('E2024-024', 6), -- CAMILA
+        ('E2020-025', 5), -- DANIELA
+        ('E2024-026', 7), -- EDUARDO
+        ('E2023-027', 6), -- FERNANDA
+        ('E2024-028', 7), -- GINA
+        ('E2023-029', 5), -- HILDA
+        ('E2023-030', 6), -- IVAN
+        ('E2024-031', 7), -- JORGE
+        ('E2024-032', 6), -- KAREN
+        ('E2023-033', 7), -- LORENZO
+        ('E2024-034', 5); -- MARCO
 
 
     /* ============================================================
@@ -147,7 +144,7 @@ BEGIN TRY
         @IdEvaluacion1,
         IC.IdInscripcion,
         N.PuntajeObtenido,
-        'Calificación migrada desde hoja Grupos 1.'
+        'Calificación de ejemplo.'
     FROM @NotasEvaluacion1 N
     INNER JOIN acad.Estudiante E
         ON E.Carnet = N.Carnet
@@ -164,10 +161,7 @@ BEGIN TRY
 
 
     /* ============================================================
-       5. CARGA DE CALIFICACIONES
-       
-       Fuente:
-       Hoja "Grupo 2" del Excel
+       5. CARGA DE CALIFICACIONES DE EJEMPLO
 
        Evaluación 2:
        Tarea 2 - Construyamos nuestro propio MER
@@ -186,37 +180,37 @@ BEGIN TRY
         PuntajeObtenido
     )
     VALUES
-        ('2024-1693U', 5), -- ZAHID
-        ('2022-0294I', 5), -- CORINA
-        ('2023-0217I', 5), -- WILLIAN
-        ('2023-0234I', 5), -- LEONARDO
-        ('2023-0390I', 3), -- MIGUEL
-        ('2023-0819I', 5), -- GERARDO
-        ('2024-1669U', 5), -- ABEL
-        ('2024-1633U', 5), -- MAIKELI
-        ('2024-1664U', 5), -- DAVID ALBERTO
-        ('2023-0396I', 4), -- JESLYNG
-        ('2023-0415I', 4), -- GENESIS
-        ('2023-0233I', 4), -- LUIS
-        ('2022-0804U', 4), -- KAROLINA
-        ('2022-0950U', 4), -- CANDIDA
-        ('2023-0394I', 3), -- IAN
-        ('2024-1369U', 5), -- ANYELICA
-        ('2024-1568U', 5), -- CRISTÓBAL
-        ('2024-1648U', 5), -- IXEL
-        ('2024-1361U', 5), -- AMALIA
-        ('2024-1372U', 5), -- AMMY
-        ('2023-1040U', 5), -- JACQUELINE
-        ('2020-0636I', 3), -- MARÍA
-        ('2023-1083U', 5), -- MICHELLE TATIANA
-        ('2023-0916U', 5), -- ALEJANDRO
-        ('2024-1688U', 4), -- MICHELLE ALEJANDRA
-        ('2024-1657U', 4), -- MARVIN
-        ('2024-1607U', 4), -- HANIEL
-        ('2024-1662U', 2), -- JAIRO
-        ('2024-1676U', 4), -- RICHARD
-        ('2024-1630U', 4), -- SOFÍA
-        ('2023-0235I', 4); -- DAVID ALEXANDER
+        ('E2024-001', 4), -- CARLOS
+        ('E2023-002', 5), -- DIEGO
+        ('E2024-003', 3), -- ELENA
+        ('E2024-004', 5), -- FABIOLA
+        ('E2024-006', 4), -- HELENA
+        ('E2022-007', 5), -- IRENE
+        ('E2022-008', 2), -- JULIA
+        ('E2024-009', 5), -- KEVIN
+        ('E2024-010', 4), -- LUIS
+        ('E2023-011', 5), -- MANUEL
+        ('E2023-012', 3), -- NATALIA
+        ('E2023-013', 4), -- OSCAR
+        ('E2024-014', 5), -- PEDRO
+        ('E2023-015', 4), -- SEBASTIAN
+        ('E2024-016', 5), -- TAMARA
+        ('E2023-017', 3), -- URSULA
+        ('E2024-018', 5), -- VICTOR
+        ('E2023-019', 4), -- WALTER
+        ('E2022-021', 5), -- YADIRA
+        ('E2023-022', 4), -- ANDRES
+        ('E2023-023', 3), -- BRUNO
+        ('E2024-024', 5), -- CAMILA
+        ('E2020-025', 4), -- DANIELA
+        ('E2024-026', 5), -- EDUARDO
+        ('E2024-028', 4), -- GINA
+        ('E2023-029', 5), -- HILDA
+        ('E2023-030', 3), -- IVAN
+        ('E2024-031', 4), -- JORGE
+        ('E2024-032', 5), -- KAREN
+        ('E2023-033', 4), -- LORENZO
+        ('E2024-034', 5); -- MARCO
 
 
     /* ============================================================
@@ -234,7 +228,7 @@ BEGIN TRY
         @IdEvaluacion2,
         IC.IdInscripcion,
         N.PuntajeObtenido,
-        'Calificación migrada desde hoja Grupo 2.'
+        'Calificación de ejemplo.'
     FROM @NotasEvaluacion2 N
     INNER JOIN acad.Estudiante E
         ON E.Carnet = N.Carnet

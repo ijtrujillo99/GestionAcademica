@@ -12,7 +12,7 @@ internal static class ResumenSituacionFactory
         decimal? puntajeTareaCurso = 20m,
         int idInscripcion = 1,
         int idEstudiante = 1,
-        string carnet = "2024-0001U",
+        string carnet = "E2024-001",
         string nombre = "Estudiante de prueba")
     {
         return new ResumenSituacionEstudiante(

@@ -178,7 +178,7 @@ BEGIN TRY
         (
             @IdParcialI,
             @IdTipoExposicion,
-            'Tarea 1: Mini-exposiciones sobre Gestores de BD del ranking DB-Engines',
+            'Tarea 1: Mini-exposiciones sobre gestores de bases de datos',
             'Mini-exposiciones sobre gestores de bases de datos.',
             7,
             0,

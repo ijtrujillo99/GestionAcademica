@@ -38,7 +38,7 @@ BEGIN TRY
 
 
     /* ============================================================
-       FECHAS REALES DE LAS SESIONES REGISTRADAS EN EL EXCEL
+       FECHAS DE EJEMPLO DE LAS SESIONES
 
        DíaSemana:
        1 = Lunes

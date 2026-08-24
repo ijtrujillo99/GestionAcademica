@@ -9,970 +9,224 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     /* ============================================================
-       1. ABEL MELQUISEDEC BERMÚDEZ DÍAZ
+       Estudiantes de ejemplo. No corresponden a personas reales.
+       TMP-A01 y TMP-B02 simulan registros incompletos (sin correo).
        ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1669U'
-           OR Correo = 'abel.bermudez873@std.uni.edu.ni'
-    )
+
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-001' OR Correo = 'carlos.molina@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2024-1669U',
-            'ABEL MELQUISEDEC BERMÚDEZ DÍAZ',
-            'M',
-            'abel.bermudez873@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-001', 'CARLOS ANDRES MOLINA RIVAS', 'M', 'carlos.molina@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       2. ALBERTO VINERTE RAFAEL CARDOZE FLORES
-       Sin carnet y sin correo
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Nombre = 'ALBERTO VINERTE RAFAEL CARDOZE FLORES'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'TMP-A01' OR Nombre = 'PABLO ESTEBAN NUNEZ SALAS')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '6FA99262',
-            'ALBERTO VINERTE RAFAEL CARDOZE FLORES',
-            'M',
-            NULL,
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('TMP-A01', 'PABLO ESTEBAN NUNEZ SALAS', 'M', NULL, NULL);
     END;
 
-
-    /* ============================================================
-       3. ALEJANDRO JOSE ALVAREZ ESPINOSA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0916U'
-           OR Correo = 'alejandro.alvarez17u@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-002' OR Correo = 'diego.solis@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2023-0916U',
-            'ALEJANDRO JOSE ALVAREZ ESPINOSA',
-            'M',
-            'alejandro.alvarez17u@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-002', 'DIEGO ARMANDO SOLIS PAREDES', 'M', 'diego.solis@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       4. AMALIA DEL CARMEN AGUIRRE GARCIA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1361U'
-           OR Correo = 'amalia.aguirre887@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-003' OR Correo = 'elena.castro@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2024-1361U',
-            'AMALIA DEL CARMEN AGUIRRE GARCIA',
-            'F',
-            'amalia.aguirre887@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-003', 'ELENA MARIA CASTRO LUNA', 'F', 'elena.castro@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       5. AMMY ENOLA ESPINOZA VALLE
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1372U'
-           OR Correo = 'ammy.espinoza748@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-004' OR Correo = 'fabiola.mora@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2024-1372U',
-            'AMMY ENOLA ESPINOZA VALLE',
-            'F',
-            'ammy.espinoza748@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-004', 'FABIOLA ISABEL MORA QUINTERO', 'F', 'fabiola.mora@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       6. ANTHONY DEREK RAMIREZ ANDINO
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1735U'
-           OR Correo = 'anthony.ramirez964@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-005' OR Correo = 'gabriel.torres@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2024-1735U',
-            'ANTHONY DEREK RAMIREZ ANDINO',
-            'M',
-            'anthony.ramirez964@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-005', 'GABRIEL ENRIQUE TORRES SILVA', 'M', 'gabriel.torres@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       7. ANYELICA MARIA ORTIZ HERNANDEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1369U'
-           OR Correo = 'anyelica.ortiz862@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-006' OR Correo = 'helena.vargas@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '2024-1369U',
-            'ANYELICA MARIA ORTIZ HERNANDEZ',
-            'F',
-            'anyelica.ortiz862@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-006', 'HELENA PATRICIA VARGAS ROJAS', 'F', 'helena.vargas@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       8. CANDIDA CAROLINA SANDINO GAITAN
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2022-0950U'
-           OR Correo = 'candida.sandino85u@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2022-007' OR Correo = 'irene.navarro@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2022-0950U',
-            'CANDIDA CAROLINA SANDINO GAITAN',
-            'F',
-            'candida.sandino85u@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2022-007', 'IRENE SOFIA NAVARRO PENA', 'F', 'irene.navarro@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       9. CORINA PATRICIA CHOW MENDEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2022-0294I'
-           OR Correo = 'corina.chow67i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2022-008' OR Correo = 'julia.pimentel@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2022-0294I',
-            'CORINA PATRICIA CHOW MENDEZ',
-            'F',
-            'corina.chow67i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2022-008', 'JULIA ANDREA PIMENTEL ORTEGA', 'F', 'julia.pimentel@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       10. CRISTÓBAL DARIO DÍAZ MORA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1568U'
-           OR Correo = 'cristobal.diaz157@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-009' OR Correo = 'kevin.mendoza@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1568U',
-            'CRISTÓBAL DARIO DÍAZ MORA',
-            'M',
-            'cristobal.diaz157@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-009', 'KEVIN RAFAEL MENDOZA CRUZ', 'M', 'kevin.mendoza@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       11. DAVID ALBERTO REYES CASTILLO
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1664U'
-           OR Correo = 'david.reyes253@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-010' OR Correo = 'luis.ocampo@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1664U',
-            'DAVID ALBERTO REYES CASTILLO',
-            'M',
-            'david.reyes253@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-010', 'LUIS FERNANDO OCAMPO BRAVO', 'M', 'luis.ocampo@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       12. DAVID ALEXANDER LACAYO URRUTIA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0235I'
-           OR Correo = 'david.lacayo69i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-011' OR Correo = 'manuel.herrera@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0235I',
-            'DAVID ALEXANDER LACAYO URRUTIA',
-            'M',
-            'david.lacayo69i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-011', 'MANUEL IGNACIO HERRERA PAZ', 'M', 'manuel.herrera@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       13. GENESIS PRISCILA MEJIA AGUILAR
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0415I'
-           OR Correo = 'genesis.mejia85i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-012' OR Correo = 'natalia.flores@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0415I',
-            'GENESIS PRISCILA MEJIA AGUILAR',
-            'F',
-            'genesis.mejia85i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-012', 'NATALIA BEATRIZ FLORES CAMPOS', 'F', 'natalia.flores@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       14. GERARDO JOSE REYES MALTEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0819I'
-           OR Correo = 'gerardo.reyes88i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-013' OR Correo = 'oscar.rivas@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0819I',
-            'GERARDO JOSE REYES MALTEZ',
-            'M',
-            'gerardo.reyes88i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-013', 'OSCAR DANIEL RIVAS GUZMAN', 'M', 'oscar.rivas@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       15. HANIEL SAMIR ARAGON TAISIGUE
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1607U'
-           OR Correo = 'haniel.aragon791@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-014' OR Correo = 'pedro.salazar@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1607U',
-            'HANIEL SAMIR ARAGON TAISIGUE',
-            'M',
-            'haniel.aragon791@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-014', 'PEDRO ANTONIO SALAZAR NUNEZ', 'M', 'pedro.salazar@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       16. HARVEY JOSÉ LÓPEZ RIVERA
-       Sin carnet y sin correo
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Nombre = 'HARVEY JOSÉ LÓPEZ RIVERA'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'TMP-B02' OR Nombre = 'RAUL ESTEBAN MIRANDA LEON')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet,
-            Nombre,
-            Sexo,
-            Correo,
-            Telefono
-        )
-        VALUES
-        (
-            '6B8F1E77',
-            'HARVEY JOSÉ LÓPEZ RIVERA',
-            'M',
-            NULL,
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('TMP-B02', 'RAUL ESTEBAN MIRANDA LEON', 'M', NULL, NULL);
     END;
 
-
-    /* ============================================================
-       17. IAN ARIEL LOPEZ MORALES
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0394I'
-           OR Correo = 'ian.lopez31i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-015' OR Correo = 'sebastian.acosta@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0394I',
-            'IAN ARIEL LOPEZ MORALES',
-            'M',
-            'ian.lopez31i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-015', 'SEBASTIAN JOSE ACOSTA VIDAURRE', 'M', 'sebastian.acosta@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       18. IXEL GABRIELA RAMÍREZ PÉREZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1648U'
-           OR Correo = 'ixel.ramirez522@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-016' OR Correo = 'tamara.benitez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1648U',
-            'IXEL GABRIELA RAMÍREZ PÉREZ',
-            'F',
-            'ixel.ramirez522@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-016', 'TAMARA LUCIA BENITEZ ROMERO', 'F', 'tamara.benitez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       19. JACQUELINE DAYANA CARCACHE PAYAN
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-1040U'
-           OR Correo = 'jacqueline.carcache94u@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-017' OR Correo = 'ursula.delgado@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-1040U',
-            'JACQUELINE DAYANA CARCACHE PAYAN',
-            'F',
-            'jacqueline.carcache94u@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-017', 'URSULA CARMEN DELGADO PONCE', 'F', 'ursula.delgado@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       20. JAIRO JOSE SANCHEZ POTOSME
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1662U'
-           OR Correo = 'jairo.sanchez657@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-018' OR Correo = 'victor.espinoza@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1662U',
-            'JAIRO JOSE SANCHEZ POTOSME',
-            'M',
-            'jairo.sanchez657@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-018', 'VICTOR MANUEL ESPINOZA REYES', 'M', 'victor.espinoza@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       21. JESLYNG DAVID MALDONADO VIVAS
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0396I'
-           OR Correo = 'jeslyng.maldonado25i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-019' OR Correo = 'walter.fuentes@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0396I',
-            'JESLYNG DAVID MALDONADO VIVAS',
-            'M',
-            'jeslyng.maldonado25i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-019', 'WALTER ALFREDO FUENTES DIAZ', 'M', 'walter.fuentes@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       22. JORDY AZAEL DIAZ RUGAMA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0253I'
-           OR Correo = 'jordy.diaz67i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-020' OR Correo = 'xavier.gomez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0253I',
-            'JORDY AZAEL DIAZ RUGAMA',
-            'M',
-            'jordy.diaz67i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-020', 'XAVIER ANDRES GOMEZ PALMA', 'M', 'xavier.gomez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       23. KAROLINA DE LAS MERCEDES DIAZ ALVAREZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2022-0804U'
-           OR Correo = 'karolina.diaz20u@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2022-021' OR Correo = 'yadira.hernandez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2022-0804U',
-            'KAROLINA DE LAS MERCEDES DIAZ ALVAREZ',
-            'F',
-            'karolina.diaz20u@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2022-021', 'YADIRA ELENA HERNANDEZ SOTO', 'F', 'yadira.hernandez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       24. LEONARDO JOSUE GARCIA ALEMAN
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0234I'
-           OR Correo = 'leonardo.garcia63i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-022' OR Correo = 'andres.ibarra@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0234I',
-            'LEONARDO JOSUE GARCIA ALEMAN',
-            'M',
-            'leonardo.garcia63i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-022', 'ANDRES FELIPE IBARRA MEJIA', 'M', 'andres.ibarra@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       25. LUIS RODRIGO BOSQUE BALTODANO
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0233I'
-           OR Correo = 'luis.bosque11i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-023' OR Correo = 'bruno.jimenez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0233I',
-            'LUIS RODRIGO BOSQUE BALTODANO',
-            'M',
-            'luis.bosque11i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-023', 'BRUNO ALEJANDRO JIMENEZ CANO', 'M', 'bruno.jimenez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       26. MAIKELI GIUVELKI RODRIGUEZ CENTENO
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1633U'
-           OR Correo = 'maikeli.rodriguez573@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-024' OR Correo = 'camila.lopez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1633U',
-            'MAIKELI GIUVELKI RODRIGUEZ CENTENO',
-            'F',
-            'maikeli.rodriguez573@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-024', 'CAMILA ROCIO LOPEZ DUARTE', 'F', 'camila.lopez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       27. MARIA ALEJANDRA GUTIÉRREZ MEJÍA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2020-0636I'
-           OR Correo = 'maria.gutierrez50i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2020-025' OR Correo = 'daniela.martinez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2020-0636I',
-            'MARIA ALEJANDRA GUTIÉRREZ MEJÍA',
-            'F',
-            'maria.gutierrez50i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2020-025', 'DANIELA ISABEL MARTINEZ RUIZ', 'F', 'daniela.martinez@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       28. MARVIN FRANCISCO PÉREZ HERNÁNDEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1657U'
-           OR Correo = 'marvin.perez258@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-026' OR Correo = 'eduardo.navas@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1657U',
-            'MARVIN FRANCISCO PÉREZ HERNÁNDEZ',
-            'M',
-            'marvin.perez258@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-026', 'EDUARDO JOSE NAVAS CORDERO', 'M', 'eduardo.navas@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       29. MELANIA DEL CARMEN CEDEÑO MEZA
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0221I'
-           OR Correo = 'melania.cedeno27i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-027' OR Correo = 'fernanda.ortiz@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0221I',
-            'MELANIA DEL CARMEN CEDEÑO MEZA',
-            'F',
-            'melania.cedeno27i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-027', 'FERNANDA LUCIA ORTIZ VELASQUEZ', 'F', 'fernanda.ortiz@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       30. MICHELLE ALEJANDRA ARCE VARGAS
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1688U'
-           OR Correo = 'michelle.arce986@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-028' OR Correo = 'gina.pacheco@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1688U',
-            'MICHELLE ALEJANDRA ARCE VARGAS',
-            'F',
-            'michelle.arce986@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-028', 'GINA MARISOL PACHECO BLANCO', 'F', 'gina.pacheco@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       31. MICHELLE TATIANA DIAZ LOPEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-1083U'
-           OR Correo = 'michelle.diaz30u@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-029' OR Correo = 'hilda.quintana@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-1083U',
-            'MICHELLE TATIANA DIAZ LOPEZ',
-            'F',
-            'michelle.diaz30u@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-029', 'HILDA VANESSA QUINTANA MORALES', 'F', 'hilda.quintana@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       32. MIGUEL ANGEL MONTIEL GOMEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0390I'
-           OR Correo = 'miguel.montiel76i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-030' OR Correo = 'ivan.ramos@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0390I',
-            'MIGUEL ANGEL MONTIEL GOMEZ',
-            'M',
-            'miguel.montiel76i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-030', 'IVAN RODRIGO RAMOS AGUILAR', 'M', 'ivan.ramos@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       33. RICHARD JOSUE QUEZADA SOLANO
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1676U'
-           OR Correo = 'richard.quezada356@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-031' OR Correo = 'jorge.santos@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1676U',
-            'RICHARD JOSUE QUEZADA SOLANO',
-            'M',
-            'richard.quezada356@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-031', 'JORGE LUIS SANTOS MEDINA', 'M', 'jorge.santos@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       34. SOFÍA ALEJANDRA CALERO HUETE
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1630U'
-           OR Correo = 'sofia.calero501@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-032' OR Correo = 'karen.tejada@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1630U',
-            'SOFÍA ALEJANDRA CALERO HUETE',
-            'F',
-            'sofia.calero501@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-032', 'KAREN PAOLA TEJADA VILLALOBOS', 'F', 'karen.tejada@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       35. WILLIAN ALBERTO PÉREZ MARTÍNEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2023-0217I'
-           OR Correo = 'willian.perez40i@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2023-033' OR Correo = 'lorenzo.urbina@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2023-0217I',
-            'WILLIAN ALBERTO PÉREZ MARTÍNEZ',
-            'M',
-            'willian.perez40i@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2023-033', 'LORENZO DAVID URBINA CASTRO', 'M', 'lorenzo.urbina@estudiante.ejemplo', NULL);
     END;
 
-
-    /* ============================================================
-       36. ZAHID ENRRIQUE ESQUIVEL LAINEZ
-       ============================================================ */
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM acad.Estudiante
-        WHERE Carnet = '2024-1693U'
-           OR Correo = 'zahid.esquivel775@std.uni.edu.ni'
-    )
+    IF NOT EXISTS (SELECT 1 FROM acad.Estudiante WHERE Carnet = 'E2024-034' OR Correo = 'marco.valdez@estudiante.ejemplo')
     BEGIN
-        INSERT INTO acad.Estudiante
-        (
-            Carnet, Nombre, Sexo, Correo, Telefono
-        )
-        VALUES
-        (
-            '2024-1693U',
-            'ZAHID ENRRIQUE ESQUIVEL LAINEZ',
-            'M',
-            'zahid.esquivel775@std.uni.edu.ni',
-            NULL
-        );
+        INSERT INTO acad.Estudiante (Carnet, Nombre, Sexo, Correo, Telefono)
+        VALUES ('E2024-034', 'MARCO ANTONIO VALDEZ PINEDA', 'M', 'marco.valdez@estudiante.ejemplo', NULL);
     END;
 
 
