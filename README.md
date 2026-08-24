@@ -20,7 +20,7 @@ Hoy se usa Swagger. No hay autenticación: el esquema `sec` queda para más adel
 - SQL Server (`MSSQLSERVER`) en ejecución
 - Base `GestionAcademica` creada con los scripts de `database/` (la API no migra)
 
-Cadena de conexión: `src/Api/appsettings.json` → `DESKTOP-INGRIDT` / `GestionAcademica`, autenticación de Windows.
+Cadena de conexión: `src/Api/appsettings.json` → `localhost` / `GestionAcademica`, autenticación de Windows. Cambia `localhost` por el nombre de tu instancia de SQL Server si hace falta.
 
 ## Arranque
 

@@ -33,11 +33,7 @@ Se ejecutan **en orden numérico**, por carpeta.
 04_reportes/16_sp_ReporteSituacionAcademica.sql
 ```
 
-La API no crea ni migra la base. Usa:
-
-```text
-DESKTOP-INGRIDT / GestionAcademica
-```
+La API no crea ni migra la base. Usa la cadena de `src/Api/appsettings.json` (`localhost` / `GestionAcademica` por defecto).
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
