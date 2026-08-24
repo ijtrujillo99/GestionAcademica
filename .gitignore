@@ -1,0 +1,33 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+
+## Publicación
+publish/
+*.nupkg
+
+## Secretos locales
+appsettings.*.local.json
+*.pfx
+
+## SQL Server: no versionar la base viva
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.trn
+
+## Sistema
+Thumbs.db
+Desktop.ini
+.DS_Store
