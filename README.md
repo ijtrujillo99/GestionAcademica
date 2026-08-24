@@ -46,6 +46,10 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Catálogos | GET | `/api/catalogos` |
 | Académico | GET | `/api/academico` |
 | Cursos | GET | `/api/cursos-ofertados` (incluye horarios) |
+| Estudiantes | GET, POST | `/api/estudiantes` |
+| Estudiante | GET, PUT | `/api/estudiantes/{id}` |
+| Inscripciones del curso | GET, POST | `/api/cursos-ofertados/{id}/inscripciones` |
+| Inscripción | PUT | `/api/inscripciones/{id}` |
 | Clases | GET, POST | `/api/cursos-ofertados/{id}/clases` |
 | Clase | PUT | `/api/clases/{id}` |
 | Asistencia | GET, PUT | `/api/clases/{id}/asistencias` |
@@ -96,6 +100,14 @@ En el front lee **`detail`**.
 La validación 400 incluye además `errors` (campo → mensajes). `GET /api/salud` en éxito sigue siendo `SaludDto`; si no hay SQL, también 503 con `ProblemDetails` (`detail` explicando la caída).
 
 Los controladores no llevan `try/catch` de HTTP: lanzan la excepción y el middleware la traduce.
+
+### Estudiantes e inscripciones
+
+- El estudiante es la persona. La inscripción lo une a un `CursoOfertado` (no a grupo ni asignatura sueltos).
+- Unique `(IdEstudiante, IdCursoOfertado)`: una sola fila por par. Reintegrar es PUT, no un segundo POST.
+- `Estudiante.Activo` desactiva a la persona; no equivale a inscripción `Retirada`.
+- El PUT de inscripción calcula `FechaRetiro` y `FechaEstado`. A `Retirada` pone retiro (hoy si no había); a `Activa` o `Pendiente` limpia el retiro.
+- `GET /api/estudiantes?q=` busca por carnet o nombre.
 
 ### Asistencia
 
