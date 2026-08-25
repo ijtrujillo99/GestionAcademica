@@ -143,6 +143,9 @@ public class GestionAcademicaDbContext : DbContext
             entity.HasOne(e => e.Periodo)
                 .WithMany(p => p.Grupos)
                 .HasForeignKey(e => e.IdPeriodo);
+            entity.HasOne(e => e.Carrera)
+                .WithMany(c => c.Grupos)
+                .HasForeignKey(e => e.IdCarrera);
         });
 
         modelBuilder.Entity<CursoOfertado>(entity =>

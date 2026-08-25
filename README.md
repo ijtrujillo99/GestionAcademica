@@ -45,7 +45,7 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Salud | GET | `/api/salud` |
 | Catálogos | GET | `/api/catalogos` |
 | Académico | GET | `/api/academico` |
-| Cursos | GET | `/api/cursos-ofertados` (incluye horarios) |
+| Cursos | GET | `/api/cursos-ofertados` (incluye horarios y carrera) |
 | Estudiantes | GET, POST | `/api/estudiantes` |
 | Estudiante | GET, PUT | `/api/estudiantes/{id}` |
 | Inscripciones del curso | GET, POST | `/api/cursos-ofertados/{id}/inscripciones` |

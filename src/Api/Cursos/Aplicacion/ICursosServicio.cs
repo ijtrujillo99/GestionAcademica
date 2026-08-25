@@ -15,6 +15,8 @@ public record CursoOfertadoResumenDto(
     int IdCursoOfertado,
     string Asignatura,
     string Grupo,
+    int IdCarrera,
+    string Carrera,
     string Docente,
     string Aula,
     int Inscripciones,

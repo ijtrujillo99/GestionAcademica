@@ -22,6 +22,8 @@ public class CursosServicio : ICursosServicio
                 c.IdCursoOfertado,
                 c.Asignatura.Nombre,
                 c.Grupo.CodigoGrupo,
+                c.Grupo.IdCarrera,
+                c.Grupo.Carrera.Nombre,
                 c.Docente.Nombre,
                 c.Aula.CodigoAula,
                 c.Inscripciones.Count,
