@@ -45,7 +45,28 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Salud | GET | `/api/salud` |
 | Catálogos | GET | `/api/catalogos` |
 | Académico | GET | `/api/academico` |
-| Cursos | GET | `/api/cursos-ofertados` (incluye horarios y carrera) |
+| Áreas de conocimiento | GET, POST | `/api/areas-conocimiento` |
+| Área | GET, PUT | `/api/areas-conocimiento/{id}` |
+| Carreras | GET, POST | `/api/carreras` |
+| Carrera | GET, PUT | `/api/carreras/{id}` |
+| Planes de la carrera | GET, POST | `/api/carreras/{id}/planes-estudio` |
+| Plan de estudio | GET, PUT | `/api/planes-estudio/{id}` |
+| Asignaturas del plan | GET, POST | `/api/planes-estudio/{id}/asignaturas` |
+| Detalle de plan | PUT | `/api/planes-estudio-detalle/{id}` |
+| Asignaturas | GET, POST | `/api/asignaturas` |
+| Asignatura | GET, PUT | `/api/asignaturas/{id}` |
+| Períodos | GET, POST | `/api/periodos-academicos` |
+| Período | GET, PUT | `/api/periodos-academicos/{id}` |
+| Grupos | GET, POST | `/api/grupos` |
+| Grupo | GET, PUT | `/api/grupos/{id}` |
+| Aulas | GET, POST | `/api/aulas` |
+| Aula | GET, PUT | `/api/aulas/{id}` |
+| Docentes | GET, POST | `/api/docentes` |
+| Docente | GET, PUT | `/api/docentes/{id}` |
+| Cursos | GET, POST | `/api/cursos-ofertados` (lista incluye horarios y carrera) |
+| Curso ofertado | GET, PUT | `/api/cursos-ofertados/{id}` |
+| Horarios del curso | GET, POST | `/api/cursos-ofertados/{id}/horarios` |
+| Horario | PUT | `/api/horarios/{id}` |
 | Estudiantes | GET, POST | `/api/estudiantes` |
 | Estudiante | GET, PUT | `/api/estudiantes/{id}` |
 | Inscripciones del curso | GET, POST | `/api/cursos-ofertados/{id}/inscripciones` |
@@ -108,6 +129,10 @@ Los controladores no llevan `try/catch` de HTTP: lanzan la excepción y el middl
 - `Estudiante.Activo` desactiva a la persona; no equivale a inscripción `Retirada`.
 - El PUT de inscripción calcula `FechaRetiro` y `FechaEstado`. A `Retirada` pone retiro (hoy si no había); a `Activa` o `Pendiente` limpia el retiro.
 - `GET /api/estudiantes?q=` busca por carnet o nombre.
+
+### Gestión académica
+
+Estructura (área → carrera → plan → asignatura) y oferta (periodo → grupo con `IdCarrera` → curso ofertado + horario). Sin DELETE físico: se usa `Activo` donde existe. `PlanEstudioDetalle` y `Horario` no tienen `Activo`; solo se corrigen con PUT. El grupo no infiere la carrera del código. El curso ofertado no se liga a un detalle de plan.
 
 ### Asistencia
 
