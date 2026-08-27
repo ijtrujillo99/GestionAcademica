@@ -8,7 +8,7 @@ Arquitectura: **monolito modular** en ASP.NET Core 6. Un solo proyecto de API, t
 GestionAcademica.sln
 ├── database/                         ← scripts SQL (esquema, datos, reportes)
 ├── src/Api/                          ← Web API + Swagger
-├── src/Web/                          ← PWA (pendiente)
+├── src/Web/                          ← mapa de la PWA (código en GestionAcademicaFront)
 └── tests/GestionAcademica.Api.Tests/ ← xUnit + Moq
 ```
 
