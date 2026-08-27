@@ -1,8 +1,14 @@
+using GestionAcademica.Api.Comun.Paginacion;
+
 namespace GestionAcademica.Api.Estudiantes.Aplicacion;
 
 public interface IEstudiantesServicio
 {
-    Task<IReadOnlyList<EstudianteResumenDto>> ListarAsync(string? q, CancellationToken cancellationToken);
+    Task<PagedResult<EstudianteResumenDto>> ListarAsync(
+        string? q,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken);
 
     Task<EstudianteResumenDto> ObtenerAsync(int idEstudiante, CancellationToken cancellationToken);
 

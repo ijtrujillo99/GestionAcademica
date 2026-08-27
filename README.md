@@ -14,6 +14,96 @@ GestionAcademica.sln
 
 Hoy se usa Swagger. No hay autenticación: el esquema `sec` queda para más adelante.
 
+## Diagramas
+
+GitHub renderiza estos diagramas (Mermaid) al abrir el README.
+
+### Arquitectura
+
+Un cliente llama a la API. El CRUD va por EF Core. Los reportes no se calculan en C#: la API ejecuta stored procedures.
+
+```mermaid
+flowchart LR
+  cliente[Swagger o React]
+  api[ASP.NET Core 6]
+  ef[EF Core]
+  sp[Stored procedures]
+  sql[SQL Server]
+
+  cliente --> api
+  api --> ef
+  api --> sp
+  ef --> sql
+  sp --> sql
+```
+
+Cada módulo de la API tiene tres capas. Los controladores no traducen HTTP: lanzan excepciones y el middleware arma `ProblemDetails`.
+
+```mermaid
+flowchart LR
+  ctrl[Controller]
+  app[Aplicacion]
+  datos[Datos]
+  db[(SQL Server)]
+
+  ctrl --> app
+  app --> datos
+  datos --> db
+```
+
+### Dominio
+
+El hub es `CursoOfertado`. La inscripción une a un estudiante con un curso, no con un grupo suelto.
+
+```mermaid
+flowchart TB
+  area[AreaConocimiento]
+  carrera[Carrera]
+  plan[PlanEstudio]
+  asignatura[Asignatura]
+  periodo[PeriodoAcademico]
+  grupo[Grupo]
+  curso[CursoOfertado]
+  estudiante[Estudiante]
+  insc[InscripcionCurso]
+  clase[Clase]
+  parcial[Parcial]
+  evaluacion[Evaluacion]
+
+  area --> carrera
+  carrera --> plan
+  plan --> asignatura
+  periodo --> grupo
+  carrera --> grupo
+  asignatura --> curso
+  grupo --> curso
+  estudiante --> insc
+  curso --> insc
+  curso --> clase
+  curso --> parcial
+  parcial --> evaluacion
+```
+
+### Flujo de uso
+
+Desde el curso se toma asistencia, se cargan notas y se consultan reportes. Los porcentajes y el resultado académico se calculan al consultar, no se guardan en tablas.
+
+```mermaid
+flowchart TD
+  cursos[Mis cursos]
+  curso[Curso ofertado]
+  asist[Asistencia]
+  eval[Evaluaciones]
+  notas[Calificaciones]
+  repo[Reportes]
+
+  cursos --> curso
+  curso --> asist
+  curso --> eval
+  eval --> notas
+  curso --> repo
+```
+
 ## Requisitos
 
 - .NET SDK 6
@@ -67,7 +157,7 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Curso ofertado | GET, PUT | `/api/cursos-ofertados/{id}` |
 | Horarios del curso | GET, POST | `/api/cursos-ofertados/{id}/horarios` |
 | Horario | PUT | `/api/horarios/{id}` |
-| Estudiantes | GET, POST | `/api/estudiantes` |
+| Estudiantes | GET, POST | `/api/estudiantes` (GET paginado: `?page=1&pageSize=10&q=`) |
 | Estudiante | GET, PUT | `/api/estudiantes/{id}` |
 | Inscripciones del curso | GET, POST | `/api/cursos-ofertados/{id}/inscripciones` |
 | Inscripción | PUT | `/api/inscripciones/{id}` |
@@ -121,6 +211,38 @@ En el front lee **`detail`**.
 La validación 400 incluye además `errors` (campo → mensajes). `GET /api/salud` en éxito sigue siendo `SaludDto`; si no hay SQL, también 503 con `ProblemDetails` (`detail` explicando la caída).
 
 Los controladores no llevan `try/catch` de HTTP: lanzan la excepción y el middleware la traduce.
+
+### Paginación (server-side)
+
+Solo `GET /api/estudiantes` está paginado por ahora. El contrato es reutilizable (`PagedResult<T>` + `ToPagedResultAsync`) para otros listados.
+
+```text
+GET /api/estudiantes
+GET /api/estudiantes?page=1&pageSize=10
+GET /api/estudiantes?q=abel&page=1&pageSize=10
+```
+
+| Campo | Significado |
+|---|---|
+| `page` | Página pedida (default `1`) |
+| `pageSize` | Tamaño (default `10`, máximo `100`) |
+| `items` | Filas de esa página |
+| `totalItems` | Total **después** del filtro `q` |
+| `totalPages` | `ceil(totalItems / pageSize)` (`0` si no hay filas) |
+
+SQL Server aplica `ORDER BY`, `OFFSET` y `FETCH`. No se pagina en memoria. Orden de estudiantes: `Nombre`, luego `IdEstudiante`.
+
+`page` o `pageSize` inválidos → `400` ProblemDetails. Una página más allá del total → `200` con `items: []`.
+
+```json
+{
+  "items": [],
+  "page": 5,
+  "pageSize": 10,
+  "totalItems": 36,
+  "totalPages": 4
+}
+```
 
 ### Estudiantes e inscripciones
 

@@ -1,4 +1,5 @@
 using GestionAcademica.Api.Comun;
+using GestionAcademica.Api.Comun.Paginacion;
 using GestionAcademica.Api.Estudiantes.Aplicacion;
 using GestionAcademica.Api.Infraestructura.Entidades.Acad;
 using GestionAcademica.Api.Infraestructura.Persistencia;
@@ -15,10 +16,13 @@ public class EstudiantesServicio : IEstudiantesServicio
         _contexto = contexto;
     }
 
-    public async Task<IReadOnlyList<EstudianteResumenDto>> ListarAsync(
+    public async Task<PagedResult<EstudianteResumenDto>> ListarAsync(
         string? q,
+        int page,
+        int pageSize,
         CancellationToken cancellationToken)
     {
+        var paginacion = PaginacionConsulta.Crear(page, pageSize);
         var consulta = _contexto.Estudiantes.AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(q))
@@ -28,9 +32,10 @@ public class EstudiantesServicio : IEstudiantesServicio
                 e.Carnet.Contains(termino) || e.Nombre.Contains(termino));
         }
 
-        return await consulta
-            .OrderBy(e => e.Nombre)
-            .Select(e => new EstudianteResumenDto(
+        return await consulta.ToPagedResultAsync(
+            paginacion,
+            origen => origen.OrderBy(e => e.Nombre).ThenBy(e => e.IdEstudiante),
+            e => new EstudianteResumenDto(
                 e.IdEstudiante,
                 e.Carnet,
                 e.Nombre,
@@ -38,8 +43,8 @@ public class EstudiantesServicio : IEstudiantesServicio
                 e.Correo,
                 e.Telefono,
                 e.FechaNacimiento,
-                e.Activo))
-            .ToListAsync(cancellationToken);
+                e.Activo),
+            cancellationToken);
     }
 
     public async Task<EstudianteResumenDto> ObtenerAsync(
