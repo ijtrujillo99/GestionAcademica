@@ -18,7 +18,7 @@ No hay autenticación. El esquema `sec` está reservado para más adelante.
 
 ## Overview
 
-El backend concentra la lógica de un curso ofertado: quién está inscrito, qué sesiones se dictaron, qué se evalúa y cómo va cada estudiante. El cliente (Swagger o la PWA en otro repositorio) no recalcula porcentajes ni el resultado académico.
+El backend concentra la lógica de un curso ofertado: quién está inscrito, qué sesiones se dictaron, qué se evalúa y cómo va cada estudiante. El cliente (Swagger o la PWA en [GestionAcademicaFront](https://github.com/ijtrujillo99/GestionAcademicaFront)) no recalcula porcentajes ni el resultado académico.
 
 El **CRUD** (catálogos, oferta, inscripciones, clases, evaluaciones y notas) pasa por EF Core. Los **reportes** se resuelven en SQL Server mediante stored procedures. Los porcentajes y el resultado académico **no se persisten**: se calculan al consultar.
 
@@ -78,10 +78,9 @@ Solución: `GestionAcademica.sln` (proyectos `GestionAcademica.Api` y `GestionAc
 ```text
 GestionAcademica/
 ├── src/
-│   ├── Api/                         ← Web API + Swagger
-│   └── Web/README.md                ← mapa de la PWA (código en GestionAcademicaFront)
-├── database/                        ← esquema, datos, SP, cambios
-├── tests/GestionAcademica.Api.Tests/
+│   └── Api/                 ← Web API + Swagger
+├── database/                ← esquema, datos, SP, cambios
+├── tests/                   ← pruebas unitarias
 ├── GestionAcademica.sln
 └── README.md
 ```
@@ -91,7 +90,8 @@ GestionAcademica/
 | `src/Api` | API REST |
 | `database/` | Scripts SQL (ver `database/README.md`) |
 | `tests/` | Pruebas unitarias (xUnit + Moq) |
-| `src/Web` | Solo documentación del front; no hay código React aquí |
+
+El frontend no forma parte de este repositorio: [GestionAcademicaFront](https://github.com/ijtrujillo99/GestionAcademicaFront).
 
 ## Modules
 
@@ -428,6 +428,4 @@ Aprobar exige nota ≥ 60 **y** Tarea de Curso calificada con puntaje > 0.
 | Anulación lógica de evaluaciones | Pendiente |
 | Prueba de integración API + SP | Pendiente |
 | Autenticación (`sec`) | Futura |
-| PWA en este repo (`src/Web`) | Solo mapa; el código está en `GestionAcademicaFront` |
-
-El mapa del frontend: [`src/Web/README.md`](src/Web/README.md).
+| Frontend (PWA) | Repositorio independiente: [GestionAcademicaFront](https://github.com/ijtrujillo99/GestionAcademicaFront) |
