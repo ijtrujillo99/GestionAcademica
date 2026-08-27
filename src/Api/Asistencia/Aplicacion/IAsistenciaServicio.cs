@@ -4,6 +4,16 @@ public interface IAsistenciaServicio
 {
     Task<IReadOnlyList<ClaseResumenDto>> ListarClasesAsync(int idCursoOfertado, CancellationToken cancellationToken);
 
+    Task<ClaseResumenDto> CrearClaseAsync(
+        int idCursoOfertado,
+        ClaseEscrituraDto datos,
+        CancellationToken cancellationToken);
+
+    Task<ClaseResumenDto> EditarClaseAsync(
+        int idClase,
+        ClaseEdicionDto datos,
+        CancellationToken cancellationToken);
+
     Task<ClaseAsistenciaDto> ObtenerListaAsync(int idClase, CancellationToken cancellationToken);
 
     Task<ClaseAsistenciaDto> GuardarAsync(
@@ -17,6 +27,15 @@ public record ClaseResumenDto(
     DateTime Fecha,
     string? Tema,
     int AsistenciasRegistradas);
+
+public record ClaseEscrituraDto(
+    DateTime Fecha,
+    string? Tema,
+    string? Descripcion);
+
+public record ClaseEdicionDto(
+    string? Tema,
+    string? Descripcion);
 
 public record EstadoAsistenciaDto(int IdEstadoAsistencia, string Nombre);
 

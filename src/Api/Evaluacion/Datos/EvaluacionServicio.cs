@@ -274,14 +274,14 @@ public class EvaluacionServicio : IEvaluacionServicio
 
         var inscripcionesCurso = await _contexto.Inscripciones
             .Where(i => i.IdCursoOfertado == evaluacion.Parcial.IdCursoOfertado)
-            .Select(i => i.IdInscripcion)
+            .Select(i => new { i.IdInscripcion, Estado = i.EstadoInscripcion.Nombre })
             .ToListAsync(cancellationToken);
 
-        var delCurso = inscripcionesCurso.ToHashSet();
+        var delCurso = inscripcionesCurso.ToDictionary(i => i.IdInscripcion, i => i.Estado);
 
         foreach (var cambio in cambios)
         {
-            if (!delCurso.Contains(cambio.IdInscripcion))
+            if (!delCurso.ContainsKey(cambio.IdInscripcion))
             {
                 throw new ReglaNegocioException(
                     $"La inscripción {cambio.IdInscripcion} no pertenece a este curso.");
@@ -303,6 +303,12 @@ public class EvaluacionServicio : IEvaluacionServicio
 
         foreach (var cambio in cambios)
         {
+            var existeCalificacion = porInscripcion.ContainsKey(cambio.IdInscripcion);
+            ReglasCalificacion.AsegurarAltaPermitida(
+                cambio.IdInscripcion,
+                delCurso[cambio.IdInscripcion],
+                existeCalificacion);
+
             if (porInscripcion.TryGetValue(cambio.IdInscripcion, out var fila))
             {
                 fila.PuntajeObtenido = cambio.PuntajeObtenido;

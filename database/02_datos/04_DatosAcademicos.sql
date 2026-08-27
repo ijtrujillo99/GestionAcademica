@@ -302,6 +302,7 @@ BEGIN TRY
         INSERT INTO acad.Grupo
         (
             IdPeriodo,
+            IdCarrera,
             CodigoGrupo,
             Nombre,
             Descripcion
@@ -309,6 +310,7 @@ BEGIN TRY
         VALUES
         (
             @IdPeriodo,
+            @IdCarrera,
             '2T2-SIS-S',
             '2T2-SIS-S',
             'Grupo de Segundo año de Ingeniería en Sistemas.'
@@ -328,6 +330,7 @@ BEGIN TRY
         INSERT INTO acad.Grupo
         (
             IdPeriodo,
+            IdCarrera,
             CodigoGrupo,
             Nombre,
             Descripcion
@@ -335,6 +338,7 @@ BEGIN TRY
         VALUES
         (
             @IdPeriodo,
+            @IdCarrera,
             '2T1-SIS-S',
             '2T1-SIS-S',
             'Grupo de Segundo año de Ingeniería en Sistemas.'

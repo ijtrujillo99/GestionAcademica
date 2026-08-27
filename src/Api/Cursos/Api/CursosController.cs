@@ -20,4 +20,29 @@ public class CursosController : ControllerBase
     {
         return Ok(await _servicio.ListarAsync(cancellationToken));
     }
+
+    [HttpGet("{idCursoOfertado:int}")]
+    public async Task<ActionResult<CursoOfertadoDetalleDto>> Obtener(
+        int idCursoOfertado,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _servicio.ObtenerAsync(idCursoOfertado, cancellationToken));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<CursoOfertadoDetalleDto>> Crear(
+        [FromBody] CursoOfertadoEscrituraDto datos,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _servicio.CrearAsync(datos, cancellationToken));
+    }
+
+    [HttpPut("{idCursoOfertado:int}")]
+    public async Task<ActionResult<CursoOfertadoDetalleDto>> Editar(
+        int idCursoOfertado,
+        [FromBody] CursoOfertadoEscrituraDto datos,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _servicio.EditarAsync(idCursoOfertado, datos, cancellationToken));
+    }
 }

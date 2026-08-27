@@ -265,6 +265,7 @@ CREATE TABLE acad.Grupo
 (
     IdGrupo     INT IDENTITY(1,1) NOT NULL,
     IdPeriodo   INT NOT NULL,
+    IdCarrera   INT NOT NULL,
     CodigoGrupo VARCHAR(30) NOT NULL,
     Nombre      VARCHAR(100) NULL,
     Descripcion VARCHAR(300) NULL,
@@ -277,6 +278,10 @@ CREATE TABLE acad.Grupo
     CONSTRAINT FK_Grupo_PeriodoAcademico
         FOREIGN KEY (IdPeriodo)
         REFERENCES acad.PeriodoAcademico(IdPeriodo),
+
+    CONSTRAINT FK_Grupo_Carrera
+        FOREIGN KEY (IdCarrera)
+        REFERENCES acad.Carrera(IdCarrera),
 
     CONSTRAINT UQ_Grupo_Periodo_Codigo
         UNIQUE (IdPeriodo, CodigoGrupo)

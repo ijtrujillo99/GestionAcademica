@@ -10,4 +10,5 @@ public class Carrera
 
     public AreaConocimiento AreaConocimiento { get; set; } = null!;
     public ICollection<PlanEstudio> PlanesEstudio { get; set; } = new List<PlanEstudio>();
+    public ICollection<Grupo> Grupos { get; set; } = new List<Grupo>();
 }
