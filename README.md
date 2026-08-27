@@ -1,43 +1,51 @@
-# Gestión Académica
+# Gestión Académica API
 
-Sistema para docentes: asistencia, evaluación y reportes.
+API REST para la gestión académica de estructura curricular, estudiantes, inscripciones, cursos ofertados, asistencia, evaluaciones, calificaciones y reportes.
 
-Arquitectura: **monolito modular** en ASP.NET Core 6. Un solo proyecto de API, tres capas por módulo (`Api` → `Aplicacion` → `Datos`) y una base SQL Server. Los porcentajes y el resultado académico **no se persisten**: se calculan al consultar.
+![.NET](https://img.shields.io/badge/.NET-6.0-512BD4?logo=dotnet&logoColor=white)
+![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?logo=microsoftsqlserver&logoColor=white)
 
-```text
-GestionAcademica.sln
-├── database/                         ← scripts SQL (esquema, datos, reportes)
-├── src/Api/                          ← Web API + Swagger
-├── src/Web/                          ← mapa de la PWA (código en GestionAcademicaFront)
-└── tests/GestionAcademica.Api.Tests/ ← xUnit + Moq
-```
+## Stack
 
-Hoy se usa Swagger. No hay autenticación: el esquema `sec` queda para más adelante.
+- ASP.NET Core 6
+- Entity Framework Core 6 (SQL Server)
+- T-SQL / stored procedures
+- Swagger / OpenAPI (Swashbuckle)
+- xUnit y Moq
 
-## Diagramas
+No hay autenticación. El esquema `sec` está reservado para más adelante.
 
-GitHub renderiza estos diagramas (Mermaid) al abrir el README.
+## Overview
 
-### Arquitectura
+El backend concentra la lógica de un curso ofertado: quién está inscrito, qué sesiones se dictaron, qué se evalúa y cómo va cada estudiante. El cliente (Swagger o la PWA en otro repositorio) no recalcula porcentajes ni el resultado académico.
 
-Un cliente llama a la API. El CRUD va por EF Core. Los reportes no se calculan en C#: la API ejecuta stored procedures.
+El **CRUD** (catálogos, oferta, inscripciones, clases, evaluaciones y notas) pasa por EF Core. Los **reportes** se resuelven en SQL Server mediante stored procedures. Los porcentajes y el resultado académico **no se persisten**: se calculan al consultar.
+
+La API **no crea ni migra** la base. El esquema, los datos de ejemplo y los procedimientos viven en `database/` y se aplican en SQL Server.
+
+## Architecture
+
+Monolito modular: un proyecto web (`GestionAcademica.Api`), módulos de negocio con tres capas (`Api` → `Aplicacion` → `Datos`). No es Clean Architecture, ni microservicios, ni un sistema distribuido.
 
 ```mermaid
-flowchart LR
-  cliente[Swagger o React]
-  api[ASP.NET Core 6]
+flowchart TB
+  cliente[Swagger o PWA]
+  api[ASP.NET Core Web API]
+  modulos[Módulos de negocio]
   ef[EF Core]
   sp[Stored procedures]
-  sql[SQL Server]
+  sql[(SQL Server)]
 
   cliente --> api
-  api --> ef
-  api --> sp
+  api --> modulos
+  modulos --> ef
+  modulos --> sp
   ef --> sql
   sp --> sql
 ```
 
-Cada módulo de la API tiene tres capas. Los controladores no traducen HTTP: lanzan excepciones y el middleware arma `ProblemDetails`.
+Cada módulo de escritura sigue el mismo corte. Los controladores no traducen HTTP: lanzan excepciones y el middleware arma `ProblemDetails`.
 
 ```mermaid
 flowchart LR
@@ -51,9 +59,63 @@ flowchart LR
   datos --> db
 ```
 
-### Dominio
+```text
+src/Api/
+├── Salud, Catalogos, Academico
+├── EstructuraAcademica, OfertaAcademica, Cursos
+├── Estudiantes, Inscripciones
+├── Asistencia, Evaluacion, Reportes
+├── Comun            ← errores, paginación, texto
+└── Infraestructura  ← DbContext, entidades, ejecutor de SP, DI
+```
 
-El hub es `CursoOfertado`. La inscripción une a un estudiante con un curso, no con un grupo suelto.
+Esquemas SQL: `cat`, `acad`, `eval`.
+
+## Repository structure
+
+Solución: `GestionAcademica.sln` (proyectos `GestionAcademica.Api` y `GestionAcademica.Api.Tests`).
+
+```text
+GestionAcademica/
+├── src/
+│   ├── Api/                         ← Web API + Swagger
+│   └── Web/README.md                ← mapa de la PWA (código en GestionAcademicaFront)
+├── database/                        ← esquema, datos, SP, cambios
+├── tests/GestionAcademica.Api.Tests/
+├── GestionAcademica.sln
+└── README.md
+```
+
+| Carpeta | Rol |
+|---|---|
+| `src/Api` | API REST |
+| `database/` | Scripts SQL (ver `database/README.md`) |
+| `tests/` | Pruebas unitarias (xUnit + Moq) |
+| `src/Web` | Solo documentación del front; no hay código React aquí |
+
+## Modules
+
+| Módulo | Responsabilidad |
+|---|---|
+| Salud | Conectividad con SQL Server |
+| Catalogos | Resumen de catálogos (`GET /api/catalogos`) |
+| Academico | Resumen académico (`GET /api/academico`) |
+| EstructuraAcademica | Área, carrera, plan de estudio, asignatura |
+| OfertaAcademica | Período, grupo (`IdCarrera`), aula, docente |
+| Cursos | Curso ofertado y horarios |
+| Estudiantes | Personas (listado paginado) |
+| Inscripciones | Vínculo estudiante–curso |
+| Asistencia | Sesiones (clases) y pasar lista |
+| Evaluacion | Parciales, evaluaciones y calificaciones |
+| Reportes | Asistencia, calificaciones y situación académica (SP) |
+| Comun | `ProblemDetails`, paginación, reglas transversales |
+| Infraestructura | Persistencia EF Core y ejecución de procedimientos |
+
+Las calificaciones no son un módulo aparte: viven en **Evaluacion**.
+
+## Domain
+
+El hub es `CursoOfertado`. La inscripción une a un **estudiante** con un **curso**, no con un grupo suelto.
 
 ```mermaid
 flowchart TB
@@ -69,6 +131,7 @@ flowchart TB
   clase[Clase]
   parcial[Parcial]
   evaluacion[Evaluacion]
+  reporte[Reportes]
 
   area --> carrera
   carrera --> plan
@@ -82,11 +145,12 @@ flowchart TB
   curso --> clase
   curso --> parcial
   parcial --> evaluacion
+  insc --> reporte
+  clase --> reporte
+  evaluacion --> reporte
 ```
 
-### Flujo de uso
-
-Desde el curso se toma asistencia, se cargan notas y se consultan reportes. Los porcentajes y el resultado académico se calculan al consultar, no se guardan en tablas.
+Uso típico desde el curso:
 
 ```mermaid
 flowchart TD
@@ -104,31 +168,90 @@ flowchart TD
   curso --> repo
 ```
 
-## Requisitos
+## Requirements
 
-- .NET SDK 6
-- SQL Server (`MSSQLSERVER`) en ejecución
+- [.NET SDK 6](https://dotnet.microsoft.com/download/dotnet/6.0)
+- SQL Server en ejecución
 - Base `GestionAcademica` creada con los scripts de `database/` (la API no migra)
 
-Cadena de conexión: `src/Api/appsettings.json` → `DESKTOP-INGRIDT` / `GestionAcademica`, autenticación de Windows.
+En Windows suele usarse el servicio `MSSQLSERVER`. No hace falta Node ni npm para este repositorio.
 
-## Arranque
+## Configuration
 
-```powershell
+Archivos: `src/Api/appsettings.json` y `src/Api/appsettings.Development.json`.
+
+La API lee `ConnectionStrings:GestionAcademica`. Configura **tu** instancia local de SQL Server, autenticación de Windows o SQL, y el nombre de la base. Ejemplo de forma (ajusta servidor e instancia):
+
+```json
+{
+  "ConnectionStrings": {
+    "GestionAcademica": "Server=localhost;Database=GestionAcademica;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
+```
+
+No subas contraseñas. Si usas autenticación SQL, deja las credenciales fuera del repositorio (secretos de usuario, variables de entorno o User Secrets).
+
+Otras convenciones de desarrollo:
+
+| Tema | Valor |
+|---|---|
+| Entorno | `ASPNETCORE_ENVIRONMENT=Development` |
+| HTTPS / HTTP | `https://localhost:7040` y `http://localhost:5226` (`launchSettings.json`) |
+| Swagger | Solo en Development: `https://localhost:7040/swagger` |
+| CORS | Orígenes `http://localhost:5173` y `https://localhost:5173` (política `PwaLocal`) |
+
+## Run locally
+
+```bash
+dotnet restore
+dotnet build
 dotnet run --project src/Api
 ```
 
-Swagger: `https://localhost:7040/swagger`
+Swagger: [https://localhost:7040/swagger](https://localhost:7040/swagger)
 
-Si `GET /api/salud` muestra 36 estudiantes, la API está leyendo los datos de ejemplo.
+Comprueba SQL con `GET /api/salud`. Si responde conectada y un conteo de estudiantes, la API está leyendo la base.
 
-```powershell
+## Tests
+
+```bash
 dotnet test tests/GestionAcademica.Api.Tests/GestionAcademica.Api.Tests.csproj
 ```
 
-## API
+Son pruebas unitarias de reglas (horario, inscripción, calificaciones, paginación, `ProblemDetails`, clasificador de situación académica). No hay suite de integración contra SQL Server.
 
-El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y curso (`EsOficial`, estado, `FechaRetiro`).
+## Database
+
+Orden, scripts y procedimientos: [`database/README.md`](database/README.md).
+
+```text
+01_esquema/     crear base, esquemas y tablas
+02_datos/       catálogos y datos de ejemplo
+03_diagnostico/ validación en SSMS (la API no lo usa)
+04_reportes/    stored procedures
+05_cambios/     ALTER sobre una base que ya existía
+```
+
+Los reportes son `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
+
+| Script | Procedimiento | GET |
+|---|---|---|
+| `12` | `acad.sp_ReporteAsistenciaEstudiante` | `.../reportes/asistencia-estudiante` |
+| `13` | `acad.sp_ReporteAsistenciaSesion` | `.../reportes/asistencia-sesion` |
+| `14` | `acad.sp_ReporteAsistenciaSemanal` | `.../reportes/asistencia-semanal` |
+| `15` | `eval.sp_ReporteCalificaciones` | `.../reportes/calificaciones` |
+| `16` | `eval.sp_ReporteSituacionAcademica` | `.../reportes/situacion-academica` |
+
+Nombres que usa C#: `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
+
+Los scripts de `02_datos/` usan identidades y notas de ejemplo. No corresponden a personas reales.
+
+## HTTP API
+
+No hay `DELETE` físico. Donde existe `Activo`, se desactiva. `PlanEstudioDetalle` y `Horario` no tienen `Activo`; se corrigen con PUT.
+
+El POST de evaluaciones responde **200** (no `201`). Queda pendiente alinearlo.
 
 | Área | Método | Ruta |
 |---|---|---|
@@ -153,11 +276,11 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Aula | GET, PUT | `/api/aulas/{id}` |
 | Docentes | GET, POST | `/api/docentes` |
 | Docente | GET, PUT | `/api/docentes/{id}` |
-| Cursos | GET, POST | `/api/cursos-ofertados` (lista incluye horarios y carrera) |
+| Cursos | GET, POST | `/api/cursos-ofertados` (lista: horarios y carrera) |
 | Curso ofertado | GET, PUT | `/api/cursos-ofertados/{id}` |
 | Horarios del curso | GET, POST | `/api/cursos-ofertados/{id}/horarios` |
 | Horario | PUT | `/api/horarios/{id}` |
-| Estudiantes | GET, POST | `/api/estudiantes` (GET paginado: `?page=1&pageSize=10&q=`) |
+| Estudiantes | GET, POST | `/api/estudiantes` (GET: `?page=&pageSize=&q=`) |
 | Estudiante | GET, PUT | `/api/estudiantes/{id}` |
 | Inscripciones del curso | GET, POST | `/api/cursos-ofertados/{id}/inscripciones` |
 | Inscripción | PUT | `/api/inscripciones/{id}` |
@@ -171,7 +294,7 @@ El hub es `CursoOfertado`. La inscripción (`InscripcionCurso`) une estudiante y
 | Calificaciones | GET, PUT | `/api/evaluaciones/{id}/calificaciones` |
 | Reportes | GET | `/api/cursos-ofertados/{id}/reportes/...` |
 
-Reportes (todos delegan a stored procedures; ver `database/README.md`):
+Reportes (query opcional `fechaDesde` / `fechaHasta` en los de asistencia):
 
 ```text
 .../reportes/asistencia-estudiante
@@ -181,11 +304,9 @@ Reportes (todos delegan a stored procedures; ver `database/README.md`):
 .../reportes/situacion-academica
 ```
 
-No hay `DELETE` de evaluaciones. La anulación lógica (`Activo`) está pendiente.
+## Errors
 
-### Errores (contrato para React)
-
-Los fallos no usan `{ "mensaje": "..." }`. Un middleware global (`ManejadorExcepcionesMiddleware`) y la validación de `[ApiController]` responden **siempre** `application/problem+json` (RFC 7807):
+Los fallos no usan `{ "mensaje": "..." }`. El middleware (`ManejadorExcepcionesMiddleware`) y la validación de `[ApiController]` responden **siempre** `application/problem+json` (RFC 7807).
 
 ```json
 {
@@ -198,9 +319,9 @@ Los fallos no usan `{ "mensaje": "..." }`. Un middleware global (`ManejadorExcep
 }
 ```
 
-En el front lee **`detail`**.
+El cliente debe leer **`detail`**.
 
-| Excepción / caso | HTTP | `title` |
+| Caso | HTTP | `title` |
 |---|---|---|
 | `ReglaNegocioException` | 400 | Regla de negocio |
 | Modelo inválido (`[ApiController]`) | 400 | Datos inválidos |
@@ -208,13 +329,11 @@ En el front lee **`detail`**.
 | `SqlException` / `DbException` | 503 | Servicio no disponible |
 | Cualquier otra | 500 | Error interno |
 
-La validación 400 incluye además `errors` (campo → mensajes). `GET /api/salud` en éxito sigue siendo `SaludDto`; si no hay SQL, también 503 con `ProblemDetails` (`detail` explicando la caída).
+La validación 400 incluye `errors` (campo → mensajes). `GET /api/salud` en éxito es `SaludDto`; si no hay SQL, 503 con `ProblemDetails`. Un `THROW` de un SP (por ejemplo curso inexistente en un reporte) también se mapea a **503**, no a 404.
 
-Los controladores no llevan `try/catch` de HTTP: lanzan la excepción y el middleware la traduce.
+## Pagination
 
-### Paginación (server-side)
-
-Solo `GET /api/estudiantes` está paginado por ahora. El contrato es reutilizable (`PagedResult<T>` + `ToPagedResultAsync`) para otros listados.
+Infraestructura reutilizable: `PagedResult<T>` y `ToPagedResultAsync` (`src/Api/Comun/Paginacion`). El `Skip`/`Take` se ejecuta en SQL Server. Hoy **solo** `GET /api/estudiantes` la usa.
 
 ```text
 GET /api/estudiantes
@@ -224,15 +343,13 @@ GET /api/estudiantes?q=abel&page=1&pageSize=10
 
 | Campo | Significado |
 |---|---|
-| `page` | Página pedida (default `1`) |
-| `pageSize` | Tamaño (default `10`, máximo `100`) |
-| `items` | Filas de esa página |
+| `page` | Default `1` |
+| `pageSize` | Default `10`, máximo `100` |
+| `items` | Filas de la página |
 | `totalItems` | Total **después** del filtro `q` |
 | `totalPages` | `ceil(totalItems / pageSize)` (`0` si no hay filas) |
 
-SQL Server aplica `ORDER BY`, `OFFSET` y `FETCH`. No se pagina en memoria. Orden de estudiantes: `Nombre`, luego `IdEstudiante`.
-
-`page` o `pageSize` inválidos → `400` ProblemDetails. Una página más allá del total → `200` con `items: []`.
+Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre). Parámetros inválidos → 400. Página más allá del total → **200** con `items: []`.
 
 ```json
 {
@@ -244,51 +361,47 @@ SQL Server aplica `ORDER BY`, `OFFSET` y `FETCH`. No se pagina en memoria. Orden
 }
 ```
 
+## Domain rules
+
 ### Estudiantes e inscripciones
 
-- El estudiante es la persona. La inscripción lo une a un `CursoOfertado` (no a grupo ni asignatura sueltos).
-- Unique `(IdEstudiante, IdCursoOfertado)`: una sola fila por par. Reintegrar es PUT, no un segundo POST.
-- `Estudiante.Activo` desactiva a la persona; no equivale a inscripción `Retirada`.
-- El PUT de inscripción calcula `FechaRetiro` y `FechaEstado`. A `Retirada` pone retiro (hoy si no había); a `Activa` o `Pendiente` limpia el retiro.
-- `GET /api/estudiantes?q=` busca por carnet o nombre.
+- El estudiante es la persona. La inscripción lo une a un `CursoOfertado`.
+- Unique `(IdEstudiante, IdCursoOfertado)`: una fila por par. Reintegrar es PUT, no un segundo POST.
+- `Estudiante.Activo` no equivale a inscripción `Retirada`.
+- PUT de inscripción: a `Retirada` pone `FechaRetiro` (hoy si no había); a `Activa` o `Pendiente` la limpia.
 
 ### Gestión académica
 
-Estructura (área → carrera → plan → asignatura) y oferta (periodo → grupo con `IdCarrera` → curso ofertado + horario). Sin DELETE físico: se usa `Activo` donde existe. `PlanEstudioDetalle` y `Horario` no tienen `Activo`; solo se corrigen con PUT. El grupo no infiere la carrera del código. El curso ofertado no se liga a un detalle de plan.
+Estructura (área → carrera → plan → asignatura) y oferta (periodo → grupo con `IdCarrera` → curso + horario). El grupo no infiere la carrera del código. El curso ofertado no se liga a un detalle de plan.
 
 ### Asistencia
 
 - Ausente ≠ sin registro (fila inexistente) ≠ retirado.
-- El POST de clases crea la sesión. El horario se resuelve con el día de la fecha; si el curso no tiene bloque ese día, 400.
-- El PUT de clase solo cambia tema y descripción. No mueve la fecha.
-- El PUT de asistencias hace upsert. No inventa ausencias.
-- Rechaza retirados e inscripciones de otro curso (`ReglaNegocioException` → 400).
+- POST de clase: el horario se resuelve por el día de la fecha; si no hay bloque ese día → 400.
+- PUT de clase: solo tema y descripción; no mueve la fecha.
+- PUT de asistencias: upsert. No inventa ausencias. Rechaza retirados e inscripciones de otro curso.
 - Después de `FechaRetiro` no se espera asistencia (`Fecha < FechaRetiro`).
 
 ### Evaluación y calificaciones
 
-- Semestre = 100 puntos: Parcial I = 50, Parcial II = 50.
-- `null` en una calificación = sin fila = sin evaluar. `0` es un cero.
-- PUT de evaluación: la suma de puntajes no puede pasar el tope del parcial; el orden es único; no se baja `PuntajeMaximo` por debajo de notas ya cargadas.
+- Semestre = 100: Parcial I 50 + Parcial II 50.
+- `null` = sin fila = sin evaluar. `0` es un cero.
+- PUT de evaluación: la suma no pasa el tope del parcial; el orden es único; no se baja `PuntajeMaximo` por debajo de notas ya cargadas.
+- No hay DELETE de evaluaciones. La anulación lógica (`Activo`) está pendiente.
+- Inscripción **Retirada**: no se **crea** una calificación nueva; sí se **actualiza** una fila existente.
 
 ### Situación académica
 
-Pregunta: *¿cómo va cada estudiante?*
+Pregunta: *¿cómo va cada estudiante?* El GET ejecuta `eval.sp_ReporteSituacionAcademica`. El `CASE` del SP es la fuente de verdad en producción.
 
-En **producción** el GET ejecuta `eval.sp_ReporteSituacionAcademica`. El `CASE` del SP es la fuente de verdad.
-
-En **pruebas unitarias** las mismas reglas viven en `ClasificadorResultadoAcademico` (C#), para no depender de SQL Server. Si se cambia el `CASE` del SP, hay que actualizar el clasificador (y al revés). Más adelante conviene una prueba de integración contra la API + la base.
-
-Nota del semestre:
+En tests unitarios las mismas reglas están en `ClasificadorResultadoAcademico`. Si se cambia el SP, hay que actualizar el clasificador (y al revés). No hay prueba de integración API + SP.
 
 ```text
 NotaFinal = Parcial I + Parcial II
           = máximo 100
 ```
 
-La **Tarea de Curso** (tipo `Tarea de Curso`, suele valer 20) **ya está dentro del Parcial II**. No se suma otra vez. Solo sirve para la condición obligatoria de aprobación.
-
-Prioridad del resultado:
+La **Tarea de Curso** (tipo `Tarea de Curso`) **ya está dentro del Parcial II**. No se suma otra vez; solo condiciona la aprobación.
 
 ```text
 Retirada                         → Retirado
@@ -301,7 +414,7 @@ cualquier otro caso              → Aprobado
 
 Aprobar exige nota ≥ 60 **y** Tarea de Curso calificada con puntaje > 0.
 
-## Estado
+## Status
 
 | Bloque | Estado |
 |---|---|
@@ -309,11 +422,12 @@ Aprobar exige nota ≥ 60 **y** Tarea de Curso calificada con puntaje > 0.
 | Evaluación y calificaciones | Cerrado (falta anulación lógica) |
 | Reportes | Cerrado a nivel funcional |
 | Situación académica | Cerrado a nivel funcional |
-| Contrato global de errores (`ProblemDetails`) | Cerrado |
-| Revisión Swagger / `201 Created` en POST evaluaciones | Pendiente |
+| Contrato de errores (`ProblemDetails`) | Cerrado |
+| Paginación de listados | Solo estudiantes; el helper sirve para otros GET |
+| `201 Created` en POST evaluaciones | Pendiente |
 | Anulación lógica de evaluaciones | Pendiente |
 | Prueba de integración API + SP | Pendiente |
-| Autenticación / `sec` | Futura |
-| PWA (`src/Web`) | Futura |
+| Autenticación (`sec`) | Futura |
+| PWA en este repo (`src/Web`) | Solo mapa; el código está en `GestionAcademicaFront` |
 
-No se agregan más endpoints académicos. Siguiente paso: revisión de controladores/Swagger (incluido devolver `201` al crear una evaluación) y después React.
+El mapa del frontend: [`src/Web/README.md`](src/Web/README.md).
