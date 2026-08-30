@@ -219,7 +219,7 @@ Comprueba SQL con `GET /api/salud`. Si responde conectada y un conteo de estudia
 dotnet test tests/GestionAcademica.Api.Tests/GestionAcademica.Api.Tests.csproj
 ```
 
-Son pruebas unitarias de reglas (horario, inscripción, calificaciones, paginación, `ProblemDetails`, clasificador de situación académica). No hay suite de integración contra SQL Server.
+Son pruebas unitarias de reglas (horario, inscripción, calificaciones, paginación, `ProblemDetails`, clasificador de situación académica, ceros de retirados en el reporte de calificaciones). No hay suite de integración contra SQL Server.
 
 ## Database
 
@@ -300,9 +300,11 @@ Reportes (query opcional `fechaDesde` / `fechaHasta` en los de asistencia):
 .../reportes/asistencia-estudiante
 .../reportes/asistencia-sesion
 .../reportes/asistencia-semanal
-.../reportes/calificaciones
+.../reportes/calificaciones          ← EstadoInscripcion; no filtra retirados
 .../reportes/situacion-academica
 ```
+
+Contrato del de calificaciones: [Reporte de calificaciones](#reporte-de-calificaciones).
 
 ## Errors
 
@@ -368,6 +370,7 @@ Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre)
 - El estudiante es la persona. La inscripción lo une a un `CursoOfertado`.
 - Unique `(IdEstudiante, IdCursoOfertado)`: una fila por par. Reintegrar es PUT, no un segundo POST.
 - `Estudiante.Activo` no equivale a inscripción `Retirada`.
+- Catálogo de inscripción: **`Activa`**, **`Pendiente`**, **`Retirada`**. `Retirado` no es un estado: es `ResultadoAcademico`.
 - PUT de inscripción: a `Retirada` pone `FechaRetiro` (hoy si no había); a `Activa` o `Pendiente` la limpia.
 
 ### Gestión académica
@@ -389,6 +392,54 @@ Estructura (área → carrera → plan → asignatura) y oferta (periodo → gru
 - PUT de evaluación: la suma no pasa el tope del parcial; el orden es único; no se baja `PuntajeMaximo` por debajo de notas ya cargadas.
 - No hay DELETE de evaluaciones. La anulación lógica (`Activo`) está pendiente.
 - Inscripción **Retirada**: no se **crea** una calificación nueva; sí se **actualiza** una fila existente.
+
+### Reporte de calificaciones
+
+`GET /api/cursos-ofertados/{id}/reportes/calificaciones` ejecuta `eval.sp_ReporteCalificaciones`. Incluye a **todos** los inscritos (también `Retirada` y `Pendiente`). El front oculta retirados en la grilla; el Excel debe exportar el JSON completo.
+
+Campos fijos, en este orden, **por nombre** (no son evaluaciones):
+
+```text
+Carnet
+Nombre Completo
+EstadoInscripcion     Activa | Pendiente | Retirada
+IdEstudiante
+IdInscripcion
+…una columna por evaluación (nombre de eval.Evaluacion)…
+AcumuladoTotal
+```
+
+`EstadoInscripcion` es el texto del catálogo. Coincide con inscripciones y situación académica: **`Retirada`**. No llega `Retirado`.
+
+Tipos en JSON:
+
+| Campo | Tipo | Valores |
+|---|---|---|
+| Evaluaciones | texto | `"0"` o `"sin evaluar"` (minúsculas) o el puntaje (`"7.00"`) |
+| `AcumuladoTotal` | número | `0.00`, `16.80`, … |
+| `EstadoInscripcion` | texto | `Activa` / `Pendiente` / `Retirada` |
+
+Reglas de celda:
+
+- Sin asistencia ni notas (`TieneActividad = 0`): evaluaciones en `"0"`.
+- Con actividad y sin fila de nota: `"sin evaluar"`.
+- `Retirada` **y** sin ninguna nota distinta de 0 (sin fila, `0` o `sin evaluar`): todas las evaluaciones en `"0"` y `AcumuladoTotal = 0`.
+- `Retirada` con una nota real (por ejemplo `7`): se dejan las notas. El front sí la muestra.
+
+```json
+{
+  "Carnet": "6FA99262",
+  "Nombre Completo": "ALBERTO VINERTE RAFAEL CARDOZE FLORES",
+  "EstadoInscripcion": "Retirada",
+  "IdEstudiante": 2,
+  "IdInscripcion": 2,
+  "Tarea 1: Mini-exposiciones sobre Gestores de BD del ranking DB-Engines": "0",
+  "Tarea 2: Construyamos nuestro propio MER": "0",
+  "AcumuladoTotal": 0.00
+}
+```
+
+El `CASE` del SP es la fuente de verdad. En tests unitarios la regla de ceros está en `ReglasReporteCalificaciones`. Detalle del procedimiento: [`database/README.md`](database/README.md#calificaciones-15).
 
 ### Situación académica
 
@@ -420,7 +471,7 @@ Aprobar exige nota ≥ 60 **y** Tarea de Curso calificada con puntaje > 0.
 |---|---|
 | Asistencia | Cerrado |
 | Evaluación y calificaciones | Cerrado (falta anulación lógica) |
-| Reportes | Cerrado a nivel funcional |
+| Reportes | Cerrado a nivel funcional (calificaciones incluye `EstadoInscripcion`) |
 | Situación académica | Cerrado a nivel funcional |
 | Contrato de errores (`ProblemDetails`) | Cerrado |
 | Paginación de listados | Solo estudiantes; el helper sirve para otros GET |

@@ -45,6 +45,8 @@ La API no crea ni migra la base. Usa la cadena de `src/Api/appsettings.json` (`l
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
+En el repo está versionado `15_sp_ReporteCalificaciones.sql`. Los de asistencia (`12`–`14`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
+
 Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo. No corresponden a personas reales.
 
 ## Reportes y API
@@ -60,6 +62,41 @@ Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo
 Los porcentajes y el resultado académico **no se guardan en tablas**. El SP los calcula.
 
 Los nombres de procedimiento que usa C# están en `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
+
+## Calificaciones (`15`)
+
+Script versionado: `04_reportes/15_sp_ReporteCalificaciones.sql`. Parámetro: `@IdCursoOfertado`. Curso inexistente → `50100`. Curso sin evaluaciones → `50101`.
+
+No filtra inscripciones: salen **Activa**, **Pendiente** y **Retirada**. El front oculta retirados en pantalla; el Excel usa la respuesta completa.
+
+Campos fijos (nombres estables; no van al `STRING_AGG` de evaluaciones):
+
+```text
+Carnet
+Nombre Completo
+EstadoInscripcion     ← catálogo: 'Activa' | 'Pendiente' | 'Retirada'
+IdEstudiante
+IdInscripcion
+…una columna por eval.Evaluacion.Nombre (orden: Parcial.Orden, Evaluacion.Orden)…
+AcumuladoTotal
+```
+
+`EstadoInscripcion` es el mismo texto que inscripciones y situación académica: **`Retirada`**, no `Retirado`. `Retirado` es `ResultadoAcademico`.
+
+Cada celda de evaluación es `VARCHAR`: `'0'`, `'sin evaluar'` o el puntaje convertido. `AcumuladoTotal` es `DECIMAL(5,2)`.
+
+```text
+TieneActividad = 0                         → '0' en todas las evaluaciones
+PuntajeObtenido IS NULL (con actividad)    → 'sin evaluar'
+Retirada y ninguna nota <> 0               → '0' en todas y AcumuladoTotal = 0
+Retirada con nota real (ej. 7)             → se dejan las notas
+```
+
+`TieneActividad` es 1 si hay asistencia del curso o cualquier fila en `eval.Calificacion` de esa inscripción.
+
+La regla de ceros del retirado está replicada en `ReglasReporteCalificaciones`. Si cambias el SP, cambia también esa clase.
+
+Tras editar el script, ejecutarlo de nuevo en SSMS (`CREATE OR ALTER`). La API no hay que recompilarla: solo reenvía el result set.
 
 ## Situación académica (`16`)
 
