@@ -65,6 +65,30 @@ Los porcentajes y el resultado académico **no se guardan en tablas**. El SP los
 
 Los nombres de procedimiento que usa C# están en `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
 
+## Calificaciones (`15`)
+
+Parámetro: `@IdCursoOfertado`. Si el curso no existe, lanza `50100`. Si no hay evaluaciones, `50101`.
+
+No filtra inscripciones: salen **Activa**, **Pendiente** y **Retirada**.
+
+Campos fijos (no son evaluaciones):
+
+```text
+Carnet
+Nombre Completo
+EstadoInscripcion     ← catálogo: 'Activa' | 'Pendiente' | 'Retirada'
+IdEstudiante
+IdInscripcion
+…columnas dinámicas por evaluación…
+AcumuladoTotal
+```
+
+`EstadoInscripcion` es el mismo texto que inscripciones y situación académica: **`Retirada`**, no `Retirado`. `Retirado` es `ResultadoAcademico`.
+
+Si `EstadoInscripcion = 'Retirada'` y no hay ninguna nota distinta de 0 (sin fila, `0` o `sin evaluar`), el SP pone `'0'` en todas las evaluaciones y `AcumuladoTotal = 0`. Si se retiró con una nota real (por ejemplo 7), las notas se dejan como están.
+
+Esa regla está replicada en `ReglasReporteCalificaciones` para pruebas unitarias. Si cambias el SP, cambia también esa clase.
+
 ## Situación académica (`16`)
 
 Parámetro: `@IdCursoOfertado`. Si el curso no existe, lanza `50110`.

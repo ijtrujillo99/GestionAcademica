@@ -219,7 +219,7 @@ Comprueba SQL con `GET /api/salud`. Si responde conectada y un conteo de estudia
 dotnet test tests/GestionAcademica.Api.Tests/GestionAcademica.Api.Tests.csproj
 ```
 
-Son pruebas unitarias de reglas (horario, inscripción, calificaciones, paginación, `ProblemDetails`, clasificador de situación académica). No hay suite de integración contra SQL Server.
+Son pruebas unitarias de reglas (horario, inscripción, calificaciones, paginación, `ProblemDetails`, clasificador de situación académica, ceros de retirados en el reporte de calificaciones). No hay suite de integración contra SQL Server.
 
 ## Database
 
@@ -389,6 +389,24 @@ Estructura (área → carrera → plan → asignatura) y oferta (periodo → gru
 - PUT de evaluación: la suma no pasa el tope del parcial; el orden es único; no se baja `PuntajeMaximo` por debajo de notas ya cargadas.
 - No hay DELETE de evaluaciones. La anulación lógica (`Activo`) está pendiente.
 - Inscripción **Retirada**: no se **crea** una calificación nueva; sí se **actualiza** una fila existente.
+
+### Reporte de calificaciones
+
+`GET .../reportes/calificaciones` ejecuta `eval.sp_ReporteCalificaciones`. Incluye a **todos** los inscritos (también retirados).
+
+Campos fijos además de `Carnet`, `Nombre Completo` y `AcumuladoTotal`:
+
+```text
+EstadoInscripcion   Activa | Pendiente | Retirada
+IdEstudiante
+IdInscripcion
+```
+
+El valor es **`Retirada`**, el mismo de inscripciones y situación académica. No llega `Retirado` (ese es el resultado académico).
+
+Si está `Retirada` y no tiene notas reales (sin fila, `0` o `sin evaluar`), el SP pone ceros en las evaluaciones y `AcumuladoTotal = 0`. Si se retiró después de una nota distinta de 0, las notas se conservan.
+
+En tests unitarios la misma regla está en `ReglasReporteCalificaciones`.
 
 ### Situación académica
 
