@@ -81,6 +81,38 @@ public class ReportesServicio : IReportesServicio
         return PrimerConjunto(conjuntos);
     }
 
+    public async Task<ReporteAcumuladoNotasDto> AcumuladoNotasAsync(
+        int idCursoOfertado,
+        bool incluirAcumuladoParcialI,
+        bool incluirExamenParcialI,
+        bool incluirAcumuladoParcialII,
+        bool incluirExamenParcialII,
+        CancellationToken cancellationToken)
+    {
+        var conjuntos = await _ejecutor.EjecutarAsync(
+            NombresProcedimientos.AcumuladoNotas,
+            new[]
+            {
+                new SqlParameter("@IdCursoOfertado", idCursoOfertado),
+                Bit("@IncluirAcumuladoParcialI", incluirAcumuladoParcialI),
+                Bit("@IncluirExamenParcialI", incluirExamenParcialI),
+                Bit("@IncluirAcumuladoParcialII", incluirAcumuladoParcialII),
+                Bit("@IncluirExamenParcialII", incluirExamenParcialII)
+            },
+            cancellationToken);
+
+        var encabezados = PrimerConjunto(conjuntos);
+        var filas = conjuntos.Count > 1
+            ? conjuntos[1]
+            : Array.Empty<IReadOnlyDictionary<string, object?>>();
+
+        return new ReporteAcumuladoNotasDto(
+            encabezados.Count == 0
+                ? new Dictionary<string, object?>(StringComparer.Ordinal)
+                : encabezados[0],
+            filas);
+    }
+
     private static IReadOnlyList<IReadOnlyDictionary<string, object?>> PrimerConjunto(
         IReadOnlyList<IReadOnlyList<IReadOnlyDictionary<string, object?>>> conjuntos)
     {
@@ -107,6 +139,14 @@ public class ReportesServicio : IReportesServicio
         return new SqlParameter(nombre, System.Data.SqlDbType.Date)
         {
             Value = valor.HasValue ? valor.Value.Date : DBNull.Value
+        };
+    }
+
+    private static SqlParameter Bit(string nombre, bool valor)
+    {
+        return new SqlParameter(nombre, System.Data.SqlDbType.Bit)
+        {
+            Value = valor
         };
     }
 }

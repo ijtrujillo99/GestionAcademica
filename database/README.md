@@ -32,6 +32,7 @@ Se ejecutan **en orden numérico**, por carpeta.
 04_reportes/14_sp_ReporteAsistenciaSemanal.sql
 04_reportes/15_sp_ReporteCalificaciones.sql
 04_reportes/16_sp_ReporteSituacionAcademica.sql
+04_reportes/19_sp_ReporteAcumuladoNotas.sql
 
 05_cambios/17_AlterGrupoIdCarrera.sql              ← solo si la base ya existía sin IdCarrera
 05_cambios/18_AlterEstudianteCodigoPersona.sql     ← solo si la base ya existía sin CodigoPersona
@@ -52,7 +53,7 @@ DESKTOP-INGRIDT / GestionAcademica
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
-En el repo están versionados `13`, `14` y `15`. Los de asistencia por estudiante (`12`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
+En el repo están versionados `13`, `14`, `15` y `19`. Los de asistencia por estudiante (`12`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
 
 Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo. No corresponden a personas reales.
 
@@ -65,6 +66,7 @@ Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo
 | `14` | `acad.sp_ReporteAsistenciaSemanal` | `.../asistencia-semanal` |
 | `15` | `eval.sp_ReporteCalificaciones` | `.../calificaciones` |
 | `16` | `eval.sp_ReporteSituacionAcademica` | `.../situacion-academica` |
+| `19` | `eval.sp_ReporteAcumuladoNotas` | `.../acumulado-notas` |
 
 Los porcentajes y el resultado académico **no se guardan en tablas**. El SP los calcula.
 
@@ -128,6 +130,29 @@ Retirada con nota real (ej. 7)             → se dejan las notas
 La regla de ceros del retirado está replicada en `ReglasReporteCalificaciones`. Si cambias el SP, cambia también esa clase.
 
 Tras editar el script, ejecutarlo de nuevo en SSMS (`CREATE OR ALTER`). La API no hay que recompilarla: solo reenvía el result set.
+
+## Acumulado de notas (`19`)
+
+Script: `04_reportes/19_sp_ReporteAcumuladoNotas.sql`. Curso inexistente → `50120`. Sin ningún filtro en 1 → `50121`.
+
+```text
+GET .../reportes/acumulado-notas
+  ?incluirAcumuladoParcialI=true
+  &incluirExamenParcialI=false
+  &incluirAcumuladoParcialII=false
+  &incluirExamenParcialII=false
+```
+
+Defaults: solo acumulado del Parcial I (sin examen). `Examen` es `TipoEvaluacion.Nombre = 'Examen'`. El acumulado es el resto del parcial (en P2 incluye Tarea de Curso).
+
+Dos result sets:
+
+```text
+Encabezado: AreaConocimiento, Carrera, Curso, Grupo, Docente, CantEstudiantes
+Filas:      CodigoSingu, Nombre, Notas
+```
+
+`CodigoSingu` = `CodigoPersona` si hay, si no `Carnet`. Solo inscripción **Activa** y `Estudiante.Activo = 1`. `Notas` = suma de `PuntajeObtenido` del filtro; sin fila cuenta 0.
 
 ## Situación académica (`16`)
 

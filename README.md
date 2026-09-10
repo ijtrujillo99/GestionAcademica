@@ -242,6 +242,7 @@ Los reportes son `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSM
 | `14` | `acad.sp_ReporteAsistenciaSemanal` | `.../reportes/asistencia-semanal` |
 | `15` | `eval.sp_ReporteCalificaciones` | `.../reportes/calificaciones` |
 | `16` | `eval.sp_ReporteSituacionAcademica` | `.../reportes/situacion-academica` |
+| `19` | `eval.sp_ReporteAcumuladoNotas` | `.../reportes/acumulado-notas` |
 
 Nombres que usa C#: `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
 
@@ -302,6 +303,7 @@ Reportes (query opcional `fechaDesde` / `fechaHasta` en los de asistencia):
 .../reportes/asistencia-semanal
 .../reportes/calificaciones          ← EstadoInscripcion; no filtra retirados
 .../reportes/situacion-academica
+.../reportes/acumulado-notas         ← ?incluirAcumuladoParcialI=&incluirExamenParcialI=&...
 ```
 
 Contrato del de calificaciones: [Reporte de calificaciones](#reporte-de-calificaciones).
@@ -442,6 +444,12 @@ Reglas de celda:
 ```
 
 El `CASE` del SP es la fuente de verdad. En tests unitarios la regla de ceros está en `ReglasReporteCalificaciones`. Detalle del procedimiento: [`database/README.md`](database/README.md#calificaciones-15).
+
+### Acumulado de notas
+
+`GET .../reportes/acumulado-notas` ejecuta `eval.sp_ReporteAcumuladoNotas`. Devuelve encabezado (área, carrera, curso, grupo, docente, cantidad) y filas `CodigoSingu`, `Nombre`, `Notas`.
+
+`CodigoSingu` = `CodigoPersona` o, si es `null`, el carnet. Solo **Activa** y estudiante activo. Los cuatro query bool eligen acumulado/examen de cada parcial. Detalle: [`database/README.md`](database/README.md#acumulado-de-notas-19).
 
 ### Situación académica
 
