@@ -384,6 +384,7 @@ Estructura (área → carrera → plan → asignatura) y oferta (periodo → gru
 - PUT de clase: solo tema y descripción; no mueve la fecha.
 - PUT de asistencias: upsert. No inventa ausencias. Rechaza retirados e inscripciones de otro curso.
 - Después de `FechaRetiro` no se espera asistencia (`Fecha < FechaRetiro`).
+- `GET .../reportes/asistencia-sesion`: `EstudiantesConsiderados` y `SinRegistro` usan esa misma fecha, no quién está `Retirada` hoy. Así `SinRegistro` no puede ser negativo.
 
 ### Evaluación y calificaciones
 

@@ -49,7 +49,7 @@ DESKTOP-INGRIDT / GestionAcademica
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
-En el repo está versionado `15_sp_ReporteCalificaciones.sql`. Los de asistencia (`12`–`14`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
+En el repo están versionados `13`, `14` y `15`. Los de asistencia por estudiante (`12`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
 
 Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo. No corresponden a personas reales.
 
@@ -66,6 +66,30 @@ Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo
 Los porcentajes y el resultado académico **no se guardan en tablas**. El SP los calcula.
 
 Los nombres de procedimiento que usa C# están en `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
+
+## Asistencia por sesión (`13`)
+
+Script: `04_reportes/13_sp_ReporteAsistenciaSesion.sql`. Parámetros: `@IdCursoOfertado`, `@FechaDesde`, `@FechaHasta` (opcionales). Curso inexistente → `50080`. Sin clases → `50081`. Rango invertido → `50082`.
+
+`EstudiantesConsiderados` es **por fecha**, la misma regla que `GET .../clases/{id}/asistencias`:
+
+```text
+FechaInicio <= fecha de la clase
+y (FechaRetiro IS NULL o fecha < FechaRetiro)
+```
+
+No usa el estado actual (`Retirada`). Quien se retiró **después** de esa sesión sigue contando ese día.
+
+```text
+SinRegistro = considerados esa sesión − filas de asistencia
+%           = Presentes (TotalAsistencia) / considerados esa sesión
+```
+
+Si se restara el total actual de no retirados a las marcas de esa clase, `SinRegistro` podía salir negativo.
+
+El segundo result set (M/F) también se limita a inscritos esperados esa fecha.
+
+El semanal (`14`) usa el mismo denominador diario para el %.
 
 ## Calificaciones (`15`)
 
