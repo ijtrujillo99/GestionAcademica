@@ -25,6 +25,7 @@ public interface IEstudiantesServicio
 public record EstudianteResumenDto(
     int IdEstudiante,
     string Carnet,
+    string? CodigoPersona,
     string Nombre,
     string Sexo,
     string? Correo,
@@ -34,6 +35,7 @@ public record EstudianteResumenDto(
 
 public record EstudianteEscrituraDto(
     string Carnet,
+    string? CodigoPersona,
     string Nombre,
     string Sexo,
     string? Correo,

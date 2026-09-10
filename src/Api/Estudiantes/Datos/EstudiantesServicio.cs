@@ -29,7 +29,9 @@ public class EstudiantesServicio : IEstudiantesServicio
         {
             var termino = q.Trim();
             consulta = consulta.Where(e =>
-                e.Carnet.Contains(termino) || e.Nombre.Contains(termino));
+                e.Carnet.Contains(termino)
+                || e.Nombre.Contains(termino)
+                || (e.CodigoPersona != null && e.CodigoPersona.Contains(termino)));
         }
 
         return await consulta.ToPagedResultAsync(
@@ -38,6 +40,7 @@ public class EstudiantesServicio : IEstudiantesServicio
             e => new EstudianteResumenDto(
                 e.IdEstudiante,
                 e.Carnet,
+                e.CodigoPersona,
                 e.Nombre,
                 e.Sexo,
                 e.Correo,
@@ -76,6 +79,7 @@ public class EstudiantesServicio : IEstudiantesServicio
         var estudiante = new Estudiante
         {
             Carnet = carnet,
+            CodigoPersona = NormalizarOpcional(datos.CodigoPersona, 8, "código de persona"),
             Nombre = nombre,
             Sexo = sexo,
             Correo = NormalizarOpcional(datos.Correo, 150, "correo"),
@@ -110,6 +114,7 @@ public class EstudiantesServicio : IEstudiantesServicio
         await AsegurarCarnetLibreAsync(carnet, idEstudiante, cancellationToken);
 
         estudiante.Carnet = carnet;
+        estudiante.CodigoPersona = NormalizarOpcional(datos.CodigoPersona, 8, "código de persona");
         estudiante.Nombre = nombre;
         estudiante.Sexo = sexo;
         estudiante.Correo = NormalizarOpcional(datos.Correo, 150, "correo");
@@ -144,6 +149,7 @@ public class EstudiantesServicio : IEstudiantesServicio
         return new EstudianteResumenDto(
             estudiante.IdEstudiante,
             estudiante.Carnet,
+            estudiante.CodigoPersona,
             estudiante.Nombre,
             estudiante.Sexo,
             estudiante.Correo,

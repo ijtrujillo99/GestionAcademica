@@ -4,6 +4,7 @@ public class Estudiante
 {
     public int IdEstudiante { get; set; }
     public string Carnet { get; set; } = string.Empty;
+    public string? CodigoPersona { get; set; }
     public string Nombre { get; set; } = string.Empty;
     public string Sexo { get; set; } = string.Empty;
     public string? Correo { get; set; }

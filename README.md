@@ -351,7 +351,7 @@ GET /api/estudiantes?q=abel&page=1&pageSize=10
 | `totalItems` | Total **después** del filtro `q` |
 | `totalPages` | `ceil(totalItems / pageSize)` (`0` si no hay filas) |
 
-Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre). Parámetros inválidos → 400. Página más allá del total → **200** con `items: []`.
+Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet, nombre o `CodigoPersona`). Parámetros inválidos → 400. Página más allá del total → **200** con `items: []`.
 
 ```json
 {
@@ -368,6 +368,7 @@ Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre)
 ### Estudiantes e inscripciones
 
 - El estudiante es la persona. La inscripción lo une a un `CursoOfertado`.
+- `CodigoPersona` es opcional (`varchar(8)`, puede ser `null`). No reemplaza al carnet.
 - Unique `(IdEstudiante, IdCursoOfertado)`: una fila por par. Reintegrar es PUT, no un segundo POST.
 - `Estudiante.Activo` no equivale a inscripción `Retirada`.
 - Catálogo de inscripción: **`Activa`**, **`Pendiente`**, **`Retirada`**. `Retirado` no es un estado: es `ResultadoAcademico`.

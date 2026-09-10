@@ -109,6 +109,7 @@ public class GestionAcademicaDbContext : DbContext
             entity.ToTable("Estudiante", Esquemas.Acad);
             entity.HasKey(e => e.IdEstudiante);
             entity.Property(e => e.Carnet).HasMaxLength(30).IsRequired();
+            entity.Property(e => e.CodigoPersona).HasMaxLength(8);
             entity.Property(e => e.Nombre).HasMaxLength(150).IsRequired();
             entity.Property(e => e.Sexo).HasMaxLength(1).IsRequired().IsFixedLength();
             entity.Property(e => e.Correo).HasMaxLength(150);

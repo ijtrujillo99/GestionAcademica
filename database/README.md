@@ -33,7 +33,8 @@ Se ejecutan **en orden numérico**, por carpeta.
 04_reportes/15_sp_ReporteCalificaciones.sql
 04_reportes/16_sp_ReporteSituacionAcademica.sql
 
-05_cambios/17_AlterGrupoIdCarrera.sql   ← solo si la base ya existía sin IdCarrera
+05_cambios/17_AlterGrupoIdCarrera.sql              ← solo si la base ya existía sin IdCarrera
+05_cambios/18_AlterEstudianteCodigoPersona.sql     ← solo si la base ya existía sin CodigoPersona
 ```
 
 La API no crea ni migra la base. Usa:
@@ -46,6 +47,8 @@ DESKTOP-INGRIDT / GestionAcademica
 
 - Base **ya creada**: ejecutar `05_cambios/17_AlterGrupoIdCarrera.sql` en SSMS. Idempotente. Rellena los grupos actuales con Ingeniería en Sistemas.
 - Instalación nueva: la columna ya está en `02_CreacionTablas.sql`; el 17 no hace falta (si lo corres, no vuelve a agregar la columna).
+
+`acad.Estudiante` tiene `CodigoPersona` (`VARCHAR(8) NULL`). No es único. El 18 solo agrega la columna si falta. En una instalación nueva ya viene en `02_CreacionTablas.sql`.
 
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
