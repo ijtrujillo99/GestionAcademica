@@ -32,8 +32,10 @@ Se ejecutan **en orden numérico**, por carpeta.
 04_reportes/14_sp_ReporteAsistenciaSemanal.sql
 04_reportes/15_sp_ReporteCalificaciones.sql
 04_reportes/16_sp_ReporteSituacionAcademica.sql
+04_reportes/19_sp_ReporteAcumuladoNotas.sql
 
-05_cambios/17_AlterGrupoIdCarrera.sql   ← solo si la base ya existía sin IdCarrera
+05_cambios/17_AlterGrupoIdCarrera.sql              ← solo si la base ya existía sin IdCarrera
+05_cambios/18_AlterEstudianteCodigoPersona.sql     ← solo si la base ya existía sin CodigoPersona
 ```
 
 La API no crea ni migra la base. Usa la cadena de `src/Api/appsettings.json` (`localhost` / `GestionAcademica` por defecto).
@@ -43,9 +45,11 @@ La API no crea ni migra la base. Usa la cadena de `src/Api/appsettings.json` (`l
 - Base **ya creada**: ejecutar `05_cambios/17_AlterGrupoIdCarrera.sql` en SSMS. Idempotente. Rellena los grupos actuales con Ingeniería en Sistemas.
 - Instalación nueva: la columna ya está en `02_CreacionTablas.sql`; el 17 no hace falta (si lo corres, no vuelve a agregar la columna).
 
+`acad.Estudiante` tiene `CodigoPersona` (`VARCHAR(8) NULL`). No es único. El 18 solo agrega la columna si falta. En una instalación nueva ya viene en `02_CreacionTablas.sql`.
+
 Los reportes están escritos como `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSMS; no hace falta recrear la base.
 
-En el repo está versionado `15_sp_ReporteCalificaciones.sql`. Los de asistencia (`12`–`14`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
+En el repo están versionados `13`, `14`, `15` y `19`. Los de asistencia por estudiante (`12`) y situación académica (`16`) viven hoy en la base; si los cambias, extrae el `CREATE OR ALTER` a `04_reportes/` para no perder el contrato.
 
 Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo. No corresponden a personas reales.
 
@@ -58,10 +62,35 @@ Los scripts de `02_datos/` usan identidades, correos, carnets y notas de ejemplo
 | `14` | `acad.sp_ReporteAsistenciaSemanal` | `.../asistencia-semanal` |
 | `15` | `eval.sp_ReporteCalificaciones` | `.../calificaciones` |
 | `16` | `eval.sp_ReporteSituacionAcademica` | `.../situacion-academica` |
+| `19` | `eval.sp_ReporteAcumuladoNotas` | `.../acumulado-notas` |
 
 Los porcentajes y el resultado académico **no se guardan en tablas**. El SP los calcula.
 
 Los nombres de procedimiento que usa C# están en `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
+
+## Asistencia por sesión (`13`)
+
+Script: `04_reportes/13_sp_ReporteAsistenciaSesion.sql`. Parámetros: `@IdCursoOfertado`, `@FechaDesde`, `@FechaHasta` (opcionales). Curso inexistente → `50080`. Sin clases → `50081`. Rango invertido → `50082`.
+
+`EstudiantesConsiderados` es **por fecha**, la misma regla que `GET .../clases/{id}/asistencias`:
+
+```text
+FechaInicio <= fecha de la clase
+y (FechaRetiro IS NULL o fecha < FechaRetiro)
+```
+
+No usa el estado actual (`Retirada`). Quien se retiró **después** de esa sesión sigue contando ese día.
+
+```text
+SinRegistro = considerados esa sesión − filas de asistencia
+%           = Presentes (TotalAsistencia) / considerados esa sesión
+```
+
+Si se restara el total actual de no retirados a las marcas de esa clase, `SinRegistro` podía salir negativo.
+
+El segundo result set (M/F) también se limita a inscritos esperados esa fecha.
+
+El semanal (`14`) usa el mismo denominador diario para el %.
 
 ## Calificaciones (`15`)
 
@@ -97,6 +126,29 @@ Retirada con nota real (ej. 7)             → se dejan las notas
 La regla de ceros del retirado está replicada en `ReglasReporteCalificaciones`. Si cambias el SP, cambia también esa clase.
 
 Tras editar el script, ejecutarlo de nuevo en SSMS (`CREATE OR ALTER`). La API no hay que recompilarla: solo reenvía el result set.
+
+## Acumulado de notas (`19`)
+
+Script: `04_reportes/19_sp_ReporteAcumuladoNotas.sql`. Curso inexistente → `50120`. Sin ningún filtro en 1 → `50121`.
+
+```text
+GET .../reportes/acumulado-notas
+  ?incluirAcumuladoParcialI=true
+  &incluirExamenParcialI=false
+  &incluirAcumuladoParcialII=false
+  &incluirExamenParcialII=false
+```
+
+Defaults: solo acumulado del Parcial I (sin examen). `Examen` es `TipoEvaluacion.Nombre = 'Examen'`. El acumulado es el resto del parcial (en P2 incluye Tarea de Curso).
+
+Dos result sets:
+
+```text
+Encabezado: AreaConocimiento, Carrera, Curso, Grupo, Docente, CantEstudiantes
+Filas:      CodigoSingu, Nombre, Notas
+```
+
+`CodigoSingu` = `CodigoPersona` si hay, si no `Carnet`. Solo inscripción **Activa** y `Estudiante.Activo = 1`. `Notas` = suma de `PuntajeObtenido` del filtro; sin fila cuenta 0.
 
 ## Situación académica (`16`)
 

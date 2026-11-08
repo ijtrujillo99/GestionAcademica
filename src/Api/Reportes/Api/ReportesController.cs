@@ -62,4 +62,22 @@ public class ReportesController : ControllerBase
     {
         return Ok(await _servicio.SituacionAcademicaAsync(idCursoOfertado, cancellationToken));
     }
+
+    [HttpGet("acumulado-notas")]
+    public async Task<IActionResult> AcumuladoNotas(
+        int idCursoOfertado,
+        [FromQuery] bool incluirAcumuladoParcialI = true,
+        [FromQuery] bool incluirExamenParcialI = false,
+        [FromQuery] bool incluirAcumuladoParcialII = false,
+        [FromQuery] bool incluirExamenParcialII = false,
+        CancellationToken cancellationToken = default)
+    {
+        return Ok(await _servicio.AcumuladoNotasAsync(
+            idCursoOfertado,
+            incluirAcumuladoParcialI,
+            incluirExamenParcialI,
+            incluirAcumuladoParcialII,
+            incluirExamenParcialII,
+            cancellationToken));
+    }
 }

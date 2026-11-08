@@ -186,6 +186,7 @@ CREATE TABLE [acad].[Estudiante]
     [FechaNacimiento]  DATE NULL,
     [Activo]           BIT NOT NULL
         CONSTRAINT [DF_Estudiante_Activo] DEFAULT (1),
+    [CodigoPersona]    VARCHAR(8) NULL,
 
     CONSTRAINT [PK_Estudiante]
         PRIMARY KEY CLUSTERED

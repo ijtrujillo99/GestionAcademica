@@ -242,6 +242,7 @@ Los reportes son `CREATE OR ALTER`. Si cambias un SP, vuelve a ejecutarlo en SSM
 | `14` | `acad.sp_ReporteAsistenciaSemanal` | `.../reportes/asistencia-semanal` |
 | `15` | `eval.sp_ReporteCalificaciones` | `.../reportes/calificaciones` |
 | `16` | `eval.sp_ReporteSituacionAcademica` | `.../reportes/situacion-academica` |
+| `19` | `eval.sp_ReporteAcumuladoNotas` | `.../reportes/acumulado-notas` |
 
 Nombres que usa C#: `src/Api/Infraestructura/Reportes/NombresProcedimientos.cs`.
 
@@ -302,6 +303,7 @@ Reportes (query opcional `fechaDesde` / `fechaHasta` en los de asistencia):
 .../reportes/asistencia-semanal
 .../reportes/calificaciones          ← EstadoInscripcion; no filtra retirados
 .../reportes/situacion-academica
+.../reportes/acumulado-notas         ← ?incluirAcumuladoParcialI=&incluirExamenParcialI=&...
 ```
 
 Contrato del de calificaciones: [Reporte de calificaciones](#reporte-de-calificaciones).
@@ -351,7 +353,7 @@ GET /api/estudiantes?q=abel&page=1&pageSize=10
 | `totalItems` | Total **después** del filtro `q` |
 | `totalPages` | `ceil(totalItems / pageSize)` (`0` si no hay filas) |
 
-Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre). Parámetros inválidos → 400. Página más allá del total → **200** con `items: []`.
+Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet, nombre o `CodigoPersona`). Parámetros inválidos → 400. Página más allá del total → **200** con `items: []`.
 
 ```json
 {
@@ -368,6 +370,7 @@ Orden: `Nombre`, luego `IdEstudiante`. `q` vacío = sin filtro (carnet o nombre)
 ### Estudiantes e inscripciones
 
 - El estudiante es la persona. La inscripción lo une a un `CursoOfertado`.
+- `CodigoPersona` es opcional (`varchar(8)`, puede ser `null`). No reemplaza al carnet.
 - Unique `(IdEstudiante, IdCursoOfertado)`: una fila por par. Reintegrar es PUT, no un segundo POST.
 - `Estudiante.Activo` no equivale a inscripción `Retirada`.
 - Catálogo de inscripción: **`Activa`**, **`Pendiente`**, **`Retirada`**. `Retirado` no es un estado: es `ResultadoAcademico`.
@@ -384,6 +387,7 @@ Estructura (área → carrera → plan → asignatura) y oferta (periodo → gru
 - PUT de clase: solo tema y descripción; no mueve la fecha.
 - PUT de asistencias: upsert. No inventa ausencias. Rechaza retirados e inscripciones de otro curso.
 - Después de `FechaRetiro` no se espera asistencia (`Fecha < FechaRetiro`).
+- `GET .../reportes/asistencia-sesion`: `EstudiantesConsiderados` y `SinRegistro` usan esa misma fecha, no quién está `Retirada` hoy. Así `SinRegistro` no puede ser negativo.
 
 ### Evaluación y calificaciones
 
@@ -440,6 +444,12 @@ Reglas de celda:
 ```
 
 El `CASE` del SP es la fuente de verdad. En tests unitarios la regla de ceros está en `ReglasReporteCalificaciones`. Detalle del procedimiento: [`database/README.md`](database/README.md#calificaciones-15).
+
+### Acumulado de notas
+
+`GET .../reportes/acumulado-notas` ejecuta `eval.sp_ReporteAcumuladoNotas`. Devuelve encabezado (área, carrera, curso, grupo, docente, cantidad) y filas `CodigoSingu`, `Nombre`, `Notas`.
+
+`CodigoSingu` = `CodigoPersona` o, si es `null`, el carnet. Solo **Activa** y estudiante activo. Los cuatro query bool eligen acumulado/examen de cada parcial. Detalle: [`database/README.md`](database/README.md#acumulado-de-notas-19).
 
 ### Situación académica
 
